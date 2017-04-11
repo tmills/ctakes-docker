@@ -1,7 +1,13 @@
 FROM ubuntu:latest
 
-RUN apt-get -y update && apt-get install openjdk-8-jdk
+RUN apt-get -y update && apt-get install openjdk-8-jdk git wget
 RUN wget -O - http://apache.osuosl.org//ctakes/ctakes-3.2.2/apache-ctakes-3.2.2-bin.tar.gz | tar xzf
 RUN wget -O - http://sourceforge.net/projects/ctakesresources/files/ctakessnorx-3.2.1.1.zip | unzip
 RUN wget -O - http://archive.apache.org/dist/uima//uima-as-2.4.0/uima-as-2.4.0-bin.tar.gz | tar xzf
+
+## FIXME -- maybe create a release and wget and avoid using git
+RUN git clone git@github.com:tmills/ctakes-docker.git
+
+ENV UIMA_HOME=/apache-uima-as-2.4.0
+ENV CTAKES_HOME=/apache-ctakes-3.2.2
 
