@@ -24,28 +24,28 @@
   <primitive>false</primitive>
   <delegateAnalysisEngineSpecifiers>
     <delegateAnalysisEngine key="Chunker">
-      <import location="../../../ctakes-chunker/desc/Chunker.xml"/>
+      <import location="/apache-ctakes-3.2.2/desc/ctakes-chunker/desc/Chunker.xml"/>
     </delegateAnalysisEngine>
     <delegateAnalysisEngine key="TokenizerAnnotator">
-      <import location="../../../ctakes-core/desc/analysis_engine/TokenizerAnnotator.xml"/>
+      <import location="/apache-ctakes-3.2.2/desc/ctakes-core/desc/analysis_engine/TokenizerAnnotator.xml"/>
     </delegateAnalysisEngine>
     <delegateAnalysisEngine key="ContextDependentTokenizerAnnotator">
-      <import location="../../../ctakes-context-tokenizer/desc/analysis_engine/ContextDependentTokenizerAnnotator.xml"/>
+      <import location="/apache-ctakes-3.2.2/desc/ctakes-context-tokenizer/desc/analysis_engine/ContextDependentTokenizerAnnotator.xml"/>
     </delegateAnalysisEngine>
     <delegateAnalysisEngine key="DictionaryLookupAnnotatorDB">
-       <import location="../../../ctakes-dictionary-lookup-fast/desc/analysis_engine/UmlsLookupAnnotator.xml"/>
+       <import location="/apache-ctakes-3.2.2/desc/ctakes-dictionary-lookup-fast/desc/analysis_engine/UmlsLookupAnnotator.xml"/>
     </delegateAnalysisEngine>
     <delegateAnalysisEngine key="StatusAnnotator">
-      <import location="../../../ctakes-ne-contexts/desc/StatusAnnotator.xml"/>
+      <import location="/apache-ctakes-3.2.2/desc/ctakes-ne-contexts/desc/StatusAnnotator.xml"/>
     </delegateAnalysisEngine>
     <delegateAnalysisEngine key="NegationAnnotator">
-      <import location="../../../ctakes-ne-contexts/desc/NegationAnnotator.xml"/>
+      <import location="/apache-ctakes-3.2.2/desc/ctakes-ne-contexts/desc/NegationAnnotator.xml"/>
     </delegateAnalysisEngine>
     <delegateAnalysisEngine key="ExtractionPrepAnnotator">
-      <import location="ExtractionPrepAnnotator.xml"/>
+      <import location="/apache-ctakes-3.2.2/desc/ctakes-clinical-pipeline/desc/analysis_engine/ExtractionPrepAnnotator.xml"/>
     </delegateAnalysisEngine>
     <delegateAnalysisEngine key="SentenceDetectorAnnotator">
-      <import location="../../../ctakes-core/desc/analysis_engine/SentenceDetectorAnnotator.xml"/>
+      <import location="/apache-ctakes-3.2.2/desc/ctakes-core/desc/analysis_engine/SentenceDetectorAnnotator.xml"/>
     </delegateAnalysisEngine>
      <!-- By default, the dictionary lookup window is Sentence.
           The change was made in 3.2.1 because experiments showed that many terms were missed when relying upon the
@@ -66,32 +66,32 @@
       <!--<import location="LookupWindowAnnotator.xml"/>-->
     <!--</delegateAnalysisEngine>-->
     <delegateAnalysisEngine key="AdjustNounPhraseToIncludeFollowingNP">
-      <import location="../../../ctakes-chunker/desc/AdjustNounPhraseToIncludeFollowingNP.xml"/>
+      <import location="/apache-ctakes-3.2.2/desc/ctakes-chunker/desc/AdjustNounPhraseToIncludeFollowingNP.xml"/>
     </delegateAnalysisEngine>
     <delegateAnalysisEngine key="AdjustNounPhraseToIncludeFollowingPPNP">
-      <import location="../../../ctakes-chunker/desc/AdjustNounPhraseToIncludeFollowingPPNP.xml"/>
+      <import location="/apache-ctakes-3.2.2/desc/ctakes-chunker/desc/AdjustNounPhraseToIncludeFollowingPPNP.xml"/>
     </delegateAnalysisEngine>
     <delegateAnalysisEngine key="SimpleSegmentAnnotator">
-      <import location="SimpleSegmentAnnotator.xml"/>
+      <import location="/apache-ctakes-3.2.2/desc/ctakes-clinical-pipeline/desc/analysis_engine/SimpleSegmentAnnotator.xml"/>
     </delegateAnalysisEngine>
     <delegateAnalysisEngine key="POSTagger">
-      <import location="../../../ctakes-pos-tagger/desc/POSTagger.xml"/>
+      <import location="/apache-ctakes-3.2.2/desc/ctakes-pos-tagger/desc/POSTagger.xml"/>
     </delegateAnalysisEngine>
-	<!-- 
+	<!--
 	<delegateAnalysisEngine key="ClearPOSTagger">
-	<import location="../../../ctakes-pos-tagger/desc/ClearNLPPOSTagger.xml"/>
+	<import location="/apache-ctakes-3.2.2/desc/ctakes-pos-tagger/desc/ClearNLPPOSTagger.xml"/>
 	</delegateAnalysisEngine>
-	 -->    
-    
-<!--     
+	 -->
+
+<!--
     <delegateAnalysisEngine key="AssertionAnnotator">
-      <import location="../../../ctakes-assertion/desc/AssertionMiniPipelineAnalysisEngine.xml"/>
+      <import location="/apache-ctakes-3.2.2/desc/ctakes-assertion/desc/AssertionMiniPipelineAnalysisEngine.xml"/>
     </delegateAnalysisEngine>
  -->
-     
-     
 
-    
+
+
+
   </delegateAnalysisEngineSpecifiers>
   <analysisEngineMetaData>
     <name>AggregatePlaintextFastUMLSProcessor</name>
@@ -138,7 +138,7 @@
         <node>TokenizerAnnotator</node>
         <node>ContextDependentTokenizerAnnotator</node>
         <node>POSTagger</node>
-		<!-- <node>ClearPOSTagger</node>  -->        
+		<!-- <node>ClearPOSTagger</node>  -->
         <node>Chunker</node>
         <node>AdjustNounPhraseToIncludeFollowingNP</node>
         <node>AdjustNounPhraseToIncludeFollowingPPNP</node>
@@ -211,7 +211,7 @@
           <type allAnnotatorFeatures="true">uima.cas.AnnotationBase</type>
           <type allAnnotatorFeatures="true">uima.tcas.Annotation</type>
           <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.ADVP</type>
-          <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.ADJP</type>        
+          <type allAnnotatorFeatures="true">org.apache.ctakes.typesystem.type.syntax.ADJP</type>
         </outputs>
         <languagesSupported/>
       </capability>
@@ -224,4 +224,3 @@
   </analysisEngineMetaData>
   <resourceManagerConfiguration/>
 </analysisEngineDescription>
-
