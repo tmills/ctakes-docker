@@ -1,2 +1,3 @@
 ctakes_umlsuser=CHANGEME
 ctakes_umlspw=CHANGEME
+broker_host=localhost
