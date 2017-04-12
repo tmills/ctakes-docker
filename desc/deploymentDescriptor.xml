@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><analysisEngineDeploymentDescription xmlns="http://uima.apache.org/resourceSpecifier">
+<?xml version="1.0" encoding="UTF-8"?>
+<analysisEngineDeploymentDescription xmlns="http://uima.apache.org/resourceSpecifier">
   <name>deploymentDescriptor</name>
   <description/>
   <version>1.0</version>
@@ -6,7 +7,7 @@
   <deployment protocol="jms" provider="activemq">
     <casPool numberOfCASes="1" initialFsHeapSize="2000000"/>
     <service>
-      <inputQueue endpoint="myQueueName" brokerURL="tcp://localhost:61616" prefetch="0"/>
+      <inputQueue endpoint="myQueueName" prefetch="0"/>
       <topDescriptor>
 <import location="dictionaryPipeline.xml"/>
       </topDescriptor>
