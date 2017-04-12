@@ -48,4 +48,4 @@ if [ ! -x "$ACTIVEMQ_HOME/bin/activemq" ]; then
     chmod +x "$ACTIVEMQ_HOME/bin/activemq"
 fi
 
-"$ACTIVEMQ_HOME/bin/activemq" "start" "xbean:file:$ACTIVEMQ_BASE/conf/activemq-nojournal.xml"
+"$ACTIVEMQ_HOME/bin/activemq" "console" "xbean:file:$ACTIVEMQ_BASE/conf/activemq-nojournal.xml"
