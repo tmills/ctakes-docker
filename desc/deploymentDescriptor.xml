@@ -6,7 +6,7 @@
   <deployment protocol="jms" provider="activemq">
     <casPool numberOfCASes="1" initialFsHeapSize="2000000"/>
     <service>
-      <inputQueue endpoint="myQueueName" brokerURL="${defaultBrokerURL}" prefetch="0"/>
+      <inputQueue endpoint="myQueueName" brokerURL="tcp://${broker_host}:61616" prefetch="0"/>
       <topDescriptor>
 <import location="dictionaryPipeline.xml"/>
       </topDescriptor>
@@ -20,4 +20,3 @@
     </service>
   </deployment>
 </analysisEngineDeploymentDescription>
-

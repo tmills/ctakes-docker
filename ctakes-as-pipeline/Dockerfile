@@ -13,3 +13,4 @@ RUN git clone https://github.com/tmills/ctakes-docker.git
 ENV UIMA_HOME=/apache-uima-as-2.4.0
 ENV CTAKES_HOME=/apache-ctakes-3.2.2
 
+CMD ./ctakes-docker/bin/deployAsyncService.sh ctakes-docker/desc/deploymentDescriptor.xml
