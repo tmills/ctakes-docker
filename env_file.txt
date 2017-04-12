@@ -1,0 +1,2 @@
+ctakes_umlsuser=CHANGEME
+ctakes_umlspw=CHANGEME

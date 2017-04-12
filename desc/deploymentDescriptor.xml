@@ -8,7 +8,7 @@
     <service>
       <inputQueue endpoint="myQueueName" brokerURL="${defaultBrokerURL}" prefetch="0"/>
       <topDescriptor>
-<import location="/home/tmill/apache-ctakes-3.2.2/desc/ctakes-clinical-pipeline/desc/analysis_engine/AggregatePlaintextFastUMLSProcessor.xml"/>
+<import location="dictionaryPipeline.xml"/>
       </topDescriptor>
       <analysisEngine async="false">
         <scaleout numberOfInstances="1"/>
