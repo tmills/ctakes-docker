@@ -24,7 +24,7 @@ fi
 
 # ActiveMQ needs a HOME
 if [ -z "$ACTIVEMQ_HOME" ] ; then
-  export ACTIVEMQ_HOME=$UIMA_HOME/apache-activemq-5.4.1
+  export ACTIVEMQ_HOME=$UIMA_HOME/apache-activemq
 fi
 
 # ActiveMQ needs a writeable directory for the log files and derbydb.
