@@ -77,20 +77,6 @@
     <delegateAnalysisEngine key="POSTagger">
       <import location="/apache-ctakes-4.0.0/desc/ctakes-pos-tagger/desc/POSTagger.xml"/>
     </delegateAnalysisEngine>
-	<!--
-	<delegateAnalysisEngine key="ClearPOSTagger">
-	<import location="/apache-ctakes-4.0.0/desc/ctakes-pos-tagger/desc/ClearNLPPOSTagger.xml"/>
-	</delegateAnalysisEngine>
-	 -->
-
-<!--
-    <delegateAnalysisEngine key="AssertionAnnotator">
-      <import location="/apache-ctakes-4.0.0/desc/ctakes-assertion/desc/AssertionMiniPipelineAnalysisEngine.xml"/>
-    </delegateAnalysisEngine>
- -->
-
-
-
 
   </delegateAnalysisEngineSpecifiers>
   <analysisEngineMetaData>
@@ -146,8 +132,8 @@
         <node>DictionaryLookupAnnotatorDB</node>
         <!-- <node>DrugNER</node> -->
         <!-- <node>AssertionAnnotator</node> -->
-        <!-- <node>StatusAnnotator</node> -->
-       	<!-- <node>NegationAnnotator</node> -->
+        <node>StatusAnnotator</node>
+       	<node>NegationAnnotator</node>
         <node>ExtractionPrepAnnotator</node>
       </fixedFlow>
     </flowConstraints>
