@@ -1,0 +1,156 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+   
+    http://www.apache.org/licenses/LICENSE-2.0
+   
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:amq="http://activemq.apache.org/schema/core"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+    <!-- Allows us to use system properties as variables in this configuration file -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <value>file:${activemq.home}/conf/credentials.properties</value>
+        </property>      
+    </bean>
+
+    <broker xmlns="http://activemq.apache.org/schema/core" persistent="false" dedicatedTaskRunner="false" schedulerSupport="false">
+ 
+        <!--
+			For better performances use VM cursor and small memory limit.
+			For more information, see:
+            
+            http://activemq.apache.org/message-cursors.html
+            
+            Also, if your producer is "hanging", it's probably due to producer flow control.
+            For more information, see:
+            http://activemq.apache.org/producer-flow-control.html
+        -->
+        <!-- 
+          Broker optimizations for better performance:
+          1) optimizedDispatch="true" - use a single thread per JMS Session. This setting instructs
+             AMQ to use a transport thread to deliver messages to JMS Listener. By default two threads
+             are used: Transport thread and a Session thread. This optimization yields the best 
+             performance gain.
+             
+          2) producerFlowControl="false" - instructs the AMQ to never slow down or block a producer      
+        -->      
+        <destinationPolicy>
+            <policyMap>
+              <policyEntries>
+			  <!-- 
+                     produceFlowControl="false" - don't block a fast producer.   
+
+                     optimizedDispatch="true" - reduces number of broker threads. By default, the broker uses a dedicated 
+                                                thread (for each Queue) to page messages from a message store into the 
+                                                Queue to be dispatched to Message Consumers. When set to "true", the broker
+                                                uses a thread pool to service all Queues.
+			   -->
+                <policyEntry topic=">" producerFlowControl="false" optimizedDispatch="true">
+                  <pendingSubscriberPolicy>
+                    <vmCursor />
+                  </pendingSubscriberPolicy>
+                </policyEntry>
+                <!-- 
+                     produceFlowControl="false" - don't block a fast producer.   
+
+                     optimizedDispatch="true" - reduces number of broker threads. By default, the broker uses a dedicated 
+                                                thread (for each Queue) to page messages from a message store into the 
+                                                Queue to be dispatched to Message Consumers. When set to "true", the broker
+                                                uses a thread pool to service all Queues.
+
+                     maxPageSize="2000" - size of the dispatch buffer (default=200). The broker applies jms selectors
+                                          to messages in this buffer only. If a consumer blocks, the producer may fill
+                                          up the queue exceeding the size of the dispatch buffer. In such case, a GetMeta
+                                          request will not be delivered to the consumer since it will not be in the dispatch
+                                          buffer. This can cause GetMeta timeout in the application.                                          
+                 -->
+                <policyEntry queue=">" producerFlowControl="false" optimizedDispatch="true" maxPageSize="1000">
+                  <pendingQueuePolicy>
+                    <vmQueueCursor/>
+                  </pendingQueuePolicy>
+                </policyEntry>
+              </policyEntries>
+            </policyMap>
+        </destinationPolicy> 
+ 
+        
+        <!-- 
+            The managementContext is used to configure how ActiveMQ is exposed in 
+            JMX. By default, ActiveMQ uses the MBean server that is started by 
+            the JVM. For more information, see: 
+            
+            http://activemq.apache.org/jmx.html 
+        -->
+        <managementContext>
+            <managementContext createConnector="true" connectorPort="1099"/>
+        </managementContext>
+
+        <!-- 
+            Configure message persistence for the broker. The default persistence
+            mechanism is the KahaDB store (identified by the kahaDB tag). 
+            For more information, see: 
+            
+            http://activemq.apache.org/persistence.html 
+        <persistenceAdapter>
+            <kahaDB directory="${activemq.base}/data/kahadb"/>
+        </persistenceAdapter>
+        -->
+        
+        
+          <!--
+            The systemUsage controls the maximum amount of space the broker will 
+            use before slowing down producers. For more information, see:
+            
+            http://activemq.apache.org/producer-flow-control.html
+    -->         
+        <systemUsage>
+            <systemUsage>
+                <memoryUsage>
+                    <memoryUsage limit="500 mb"/>
+                </memoryUsage>
+                <storeUsage>
+                    <storeUsage limit="1 gb"/>
+                </storeUsage>
+                <tempUsage>
+                    <tempUsage limit="500 mb"/>
+                </tempUsage>
+            </systemUsage>
+        </systemUsage>
+	
+		  
+        <!-- 
+            The transport connectors expose ActiveMQ over a given protocol to
+            clients and other brokers. For more information, see: 
+            
+            http://activemq.apache.org/configuring-transports.html 
+        -->
+        <transportConnectors>
+            <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
+            <transportConnector name="http" uri="http://0.0.0.0:8080"/>
+        </transportConnectors>
+
+    </broker>
+
+    <!-- 
+        Enable web consoles, REST and Ajax APIs and demos
+        It also includes Camel (with its web console), see ${ACTIVEMQ_HOME}/conf/camel.xml for more info
+        
+        Take a look at ${ACTIVEMQ_HOME}/conf/jetty.xml for more details 
+    <import resource="jetty.xml"/>
+    -->
+</beans>    

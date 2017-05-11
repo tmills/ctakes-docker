@@ -1,4 +1,7 @@
 amq/
 apache-ctakes-4.0.0/
 apache-uima-as-2.9.0
+apache-activemq-5.14.5
 .class
+.tar.gz
+.tgz

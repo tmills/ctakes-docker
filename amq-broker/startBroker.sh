@@ -17,31 +17,18 @@
 #   specific language governing permissions and limitations
 #   under the License.
 
-if [ "$UIMA_HOME" = "" ]; then
-  echo UIMA_HOME environment variable is not set
-  exit 1
-fi
-
 # ActiveMQ needs a HOME
-if [ -z "$ACTIVEMQ_HOME" ] ; then
-  export ACTIVEMQ_HOME=$UIMA_HOME/apache-activemq
-fi
+export ACTIVEMQ_HOME=/apache-activemq-5.14.5
 
 # ActiveMQ needs a writeable directory for the log files and derbydb.
 if [ -z "$ACTIVEMQ_BASE" ] ; then
-  export ACTIVEMQ_BASE=amq
+  export ACTIVEMQ_BASE=$ACTIVEMQ_HOME
 fi
 
 # If the directory doesn't exist, make it
 if [ ! -d "$ACTIVEMQ_BASE" ] ; then
   mkdir "$ACTIVEMQ_BASE"
   mkdir "$ACTIVEMQ_BASE/conf"
-fi
-
-# If the config file isn't there, copy it
-if [ ! -f "$ACTIVEMQ_BASE/conf/activemq-nojournal.xml" ] ; then
-  cp "$UIMA_HOME/as_config/activemq-nojournal.xml" "$ACTIVEMQ_BASE/conf/"
-  cp "$UIMA_HOME/as_config/log4j.properties" "$ACTIVEMQ_BASE/conf/"
 fi
 
 if [ ! -x "$ACTIVEMQ_HOME/bin/activemq" ]; then
