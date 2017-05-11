@@ -31,7 +31,7 @@ public class MistAnalysisEngine extends JCasAnnotator_ImplBase{
       String line;
       StringBuilder buff = new StringBuilder();
       while((line = reader.readLine()) != null){
-        System.err.println("Seeing input line: " + line);
+        //System.err.println("Seeing input line: " + line);
         if(line.contains(": -")) continue;
         buff.append(line);
       }
