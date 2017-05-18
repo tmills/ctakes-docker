@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<analysisEngineDescription xmlns="http://uima.apache.org/resourceSpecifier">
+    <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
+    <primitive>false</primitive>
+    <delegateAnalysisEngineSpecifiers>
+        <delegateAnalysisEngine key="remoteMist">
+            <import location="docker-mist.xml"/>
+        </delegateAnalysisEngine>
+        <delegateAnalysisEngine key="remoteFastDescriptor">
+            <import location="/Users/tmill/Projects/apache-ctakes/ctakes-clinical-pipeline/desc/analysis_engine/docker-fast-dictionary.xml"/>
+        </delegateAnalysisEngine>
+    </delegateAnalysisEngineSpecifiers>
+    <analysisEngineMetaData>
+        <name/>
+        <configurationParameters/>
+        <configurationParameterSettings/>
+        <flowConstraints>
+            <fixedFlow>
+                <node>remoteMist</node>
+                <node>remoteFastDescriptor</node>
+            </fixedFlow>
+        </flowConstraints>
+        <capabilities/>
+        <operationalProperties>
+            <modifiesCas>true</modifiesCas>
+            <multipleDeploymentAllowed>true</multipleDeploymentAllowed>
+            <outputsNewCASes>false</outputsNewCASes>
+        </operationalProperties>
+    </analysisEngineMetaData>
+    
+</analysisEngineDescription>

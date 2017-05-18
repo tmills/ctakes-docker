@@ -1,5 +1,6 @@
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
+import org.apache.uima.fit.util.CasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import java.io.BufferedReader;
@@ -15,7 +16,8 @@ public class MistAnalysisEngine extends JCasAnnotator_ImplBase{
   @Override
   public void process(JCas jCas) throws AnalysisEngineProcessException {
     try{
-      JCas deidView = jCas.createView(DEID_VIEW_NAME);
+      JCas deidView = CasUtil.getView(jCas.getCas(), DEID_VIEW_NAME, true).getJCas();
+      
       File tempOut = File.createTempFile("deidfile", "mist");
 
       Process p = new ProcessBuilder(getCommand(tempOut.getAbsolutePath())).start();

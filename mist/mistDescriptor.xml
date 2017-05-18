@@ -42,6 +42,9 @@ and creates a new view with the de-identified version of the text.</description>
 <outputs>
 </outputs>
 <languagesSupported/>
+<outputSofas>
+    <sofaName>DeidView</sofaName>
+</outputSofas>
 </capability>
 </capabilities>
 <operationalProperties>
