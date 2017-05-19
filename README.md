@@ -33,17 +33,26 @@ ctakes-as-pipeline> docker build -t ctakes-as-pipeline .
 3. Start Mist container:
 `./bin/runMistContainer.sh`
 
-4. Start CVD:
+4. Start Pipeline container:
+`./bin/runPipelineContainer.sh`
+
+5. Start CVD:
 `$UIMA_HOME/bin/cvd.sh`
 
-5. Load descriptor to mist:
-`Run->Load AE->./desc/remoteMist.xml`
+6. Load descriptor to full pipeline:
+`Run->Load AE->./desc/remoteFull.xml`
 
-6. Enter text into text window.
+7. Enter text into text window.
 
-7. Run descriptor: `Run->Run remoteMist`
+8. Run descriptor: `Run->Run Aggregate with de-identification`
 
-8. Look at de-identified text with `Select View->DeidView`
+9. Look at de-identified text and annotations with `Select View->DeidView`
 
 
-### Running the ctakes pipeline works similarly, but by running `bin/runPipelineContainer.sh` and using the descriptor `desc/remoteFastDescriptor.xml`.
+### Running via collection reader
+If you want to run on a collection of files rather than through the debugger,
+modify this sample pipeline. Perform the first 4 steps as above, then:
+
+5. `./bin/runRemoteAsyncAE.sh tcp://<local ip address>:61616 mainQueue -d desc/localDeploymentDescriptor.xml -c desc/FilesInDirectoryCollectionReader.xml -o xmis/`
+
+Replacing `<my ip address>` with the IP address of the host you are running the command on. This will read from the samples sub-directory and write the output to serialized xmi files in the xmis subdirectory. You can use the CVD as above to view the annotations of these files. To modify this for your data, edit the FilesInDirectoryCollectionReader.xml file to point at a folder on your machine, or use a completely different collection reader if you like.
