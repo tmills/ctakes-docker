@@ -16,4 +16,4 @@ COPY desc/dictionaryPipeline.xml /desc/
 ENV UIMA_HOME=/apache-uima-as-2.9.0
 ENV CTAKES_HOME=/apache-ctakes-4.0.0
 
-CMD ./deployAsyncService.sh desc/deploymentDescriptor.xml -brokerURL "tcp://$broker_host:61616"
+CMD ./deployAsyncService.sh desc/deploymentDescriptor.xml -brokerURL "tcp://$broker_host:$broker_port"

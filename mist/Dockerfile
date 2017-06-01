@@ -33,4 +33,4 @@ COPY commons-lang-2.6.jar /
 RUN javac -cp uimafit-core-2.2.0.jar:uimaj-core-2.9.0.jar:. MistAnalysisEngine.java
 RUN jar cf mist.jar MistAnalysisEngine.class
 
-CMD ./deployAsyncService.sh mistDeploymentDescriptor.xml -brokerURL "tcp://$broker_host:61616"
+CMD ./deployAsyncService.sh mistDeploymentDescriptor.xml -brokerURL "tcp://$broker_host:$broker_port"
