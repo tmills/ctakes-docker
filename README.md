@@ -17,7 +17,7 @@ annotating concepts with negation, subject, and history attributes (ctakes-as-pi
 * Apache UIMA somewhere on your system ($UIMA_HOME)
 * The SHARP de-identification model (licensing status unclear) in mist/SHARP
 * Copy env_file_sample.txt to env_file.txt and add your UMLS credentials and IP
-address to appropriate environment variables.
+address and port of broker to appropriate environment variables.
 
 #### Steps:
 1. Build containers inside each subdirectory:
@@ -56,3 +56,16 @@ modify this sample pipeline. Perform the first 4 steps as above, then:
 5. `./bin/runRemoteAsyncAE.sh tcp://<local ip address>:61616 mainQueue -d desc/localDeploymentDescriptor.xml -c desc/FilesInDirectoryCollectionReader.xml -o xmis/`
 
 Replacing `<my ip address>` with the IP address of the host you are running the command on. This will read from the samples sub-directory and write the output to serialized xmi files in the xmis subdirectory. You can use the CVD as above to view the annotations of these files. To modify this for your data, edit the FilesInDirectoryCollectionReader.xml file to point at a folder on your machine, or use a completely different collection reader if you like.
+
+
+### Running on ec2
+If you install docker on an ec2 instance and check out this repo, you can build
+the images and start mostly as in 1-4.
+
+On our instance, we do not have all ports exposed so I modified the broker
+container startup script (2) so that it maps port 80 on the host to 61616 on
+the broker container:
+`docker run -d -p 80:61616 amq-image`
+
+then you change the env_file.txt to point to port 80 and the other scripts
+should work as before.
