@@ -23,7 +23,7 @@ address and port of broker to appropriate environment variables.
 1. Build containers inside each subdirectory:
 ```
 mist> docker build -t mist-container .
-amq-broker> docker built -t amq-image .
+amq-broker> docker build -t amq-image .
 ctakes-as-pipeline> docker build -t ctakes-as-pipeline .
 ```
 
