@@ -20,7 +20,7 @@ cd /opt
 wget http://apache.org/dist/uima/uimaj-2.10.0/uimaj-2.10.0-bin.tar.gz
 tar -xvf uimaj-2.10.0-bin.tar.gz
 rm uimaj*.gz
-export UIMA_HOME=/opt/apache-uima
+export UIMA_HOME=/opt/apache-uima # you'll want to store this in your .bashrc as well
 ```
 
 2. The SHARP de-identification model (licensing status unclear) in mist/SHARP. If not using SHARP, the generic HIPAA model can be used via:
