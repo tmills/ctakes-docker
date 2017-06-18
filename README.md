@@ -14,9 +14,22 @@ annotating concepts with negation, subject, and history attributes (ctakes-as-pi
 ### Steps for running pipeline locally:
 
 #### Prerequisites:
-* Apache UIMA somewhere on your system ($UIMA_HOME)
-* The SHARP de-identification model (licensing status unclear) in mist/SHARP
-* Copy env_file_sample.txt to env_file.txt and add your UMLS credentials and IP
+1. Install Apache UIMA and set $UIMA_HOME:
+```
+cd /opt
+wget http://apache.org/dist/uima/uimaj-2.10.0/uimaj-2.10.0-bin.tar.gz
+tar -xvf uimaj-2.10.0-bin.tar.gz
+rm uimaj*.gz
+export UIMA_HOME=/opt/apache-uima
+```
+
+2. The SHARP de-identification model (licensing status unclear) in mist/SHARP. If not using SHARP, the generic HIPAA model can be used via:
+```
+sed -i 's/install\ src\/tasks\/SHARP/install\ src\/tasks\/HIPAA/' mist/Dockerfile
+sed -i 's/SHARP\ Deidentification/HIPAA\ Deidentification/' mist/MistAnalysisEngine.java
+```
+
+3. Copy env_file_sample.txt to env_file.txt and add your UMLS credentials and IP
 address and port of broker to appropriate environment variables.
 
 #### Steps:
