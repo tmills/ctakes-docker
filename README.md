@@ -26,6 +26,8 @@ export UIMA_HOME=/opt/apache-uima # you'll want to store this in your .bashrc as
 2. The SHARP de-identification model (licensing status unclear) in mist/SHARP. If not using SHARP, the generic HIPAA model can be used via:
 ```
 sed -i 's/install\ src\/tasks\/SHARP/install\ src\/tasks\/HIPAA/' mist/Dockerfile
+sed -i 's/RUN\ mkdir\ src\/tasks\/SHARP/#RUN\ mkdir\ src\/tasks\/SHARP/'  mist/Dockerfile
+sed -i 's/COPY\ SHARP\ src\/tasks\/SHARP/#COPY\ SHARP\ src\/tasks\/SHARP/' mist/Dockerfile
 sed -i 's/SHARP\ Deidentification/HIPAA\ Deidentification/' mist/MistAnalysisEngine.java
 ```
 
