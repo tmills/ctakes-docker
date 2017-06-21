@@ -6,33 +6,36 @@ is to create containers for collection readers, pipelines, and consumers,
 and parameterized scripts for starting them at scale on HIPAA-compliant cloud
 platforms.
 
-Status as of May 11, 2017: We have container definitions for the Apache
+Status as of June 21 2017: We have container definitions for the Apache
 ActiveMQ server that coordinates between readers and pipelines. We have
 one analysis engine for doing de-identification (mist) and another for
 annotating concepts with negation, subject, and history attributes (ctakes-as-pipeline).
+These can be run together in an EC2 instance.
 
 ### Steps for running pipeline locally:
 
 #### Prerequisites:
-1. Install Apache UIMA and set $UIMA_HOME:
+1. Install Apache UIMA-AS and set $UIMA_HOME:
 ```
 cd /opt
-wget http://apache.org/dist/uima/uimaj-2.10.0/uimaj-2.10.0-bin.tar.gz
-tar -xvf uimaj-2.10.0-bin.tar.gz
-rm uimaj*.gz
-export UIMA_HOME=/opt/apache-uima # you'll want to store this in your .bashrc as well
+wget http://apache.mirrors.ovh.net/ftp.apache.org/dist//uima/uima-as-2.9.0/uima-as-2.9.0-bin.tar.gz
+tar -xvf uima-as-2.9.0-bin.tar.gz
+rm uima-as-2.9.0*.gz
+export UIMA_HOME=/opt/apache-uima-as-2.9.0 # you'll want to store this in your .bashrc as well
 ```
 
-2. The SHARP de-identification model (licensing status unclear) in mist/SHARP. If not using SHARP, the generic HIPAA model can be used via:
+2. The SHARP de-identification model cannot be publicly released. If not using SHARP, you will need to use MIST to create your own model with the generic HIPAA framework. Installing that model and fixing the rest of the project to use it would look something like this:
 ```
 sed -i 's/install\ src\/tasks\/SHARP/install\ src\/tasks\/HIPAA/' mist/Dockerfile
 sed -i 's/RUN\ mkdir\ src\/tasks\/SHARP/#RUN\ mkdir\ src\/tasks\/SHARP/'  mist/Dockerfile
 sed -i 's/COPY\ SHARP\ src\/tasks\/SHARP/#COPY\ SHARP\ src\/tasks\/SHARP/' mist/Dockerfile
-sed -i 's/SHARP\ Deidentification/HIPAA\ Deidentification/' mist/MistAnalysisEngine.java
+sed -i 's/SHARP/HIPAA/' mist/MistAnalysisEngine.java
 ```
 
 3. Copy env_file_sample.txt to env_file.txt and add your UMLS credentials and IP
 address and port of broker to appropriate environment variables.
+
+  *Note: The IP address must be visible from inside containers - something like the DHCP-assigned IP address of the host system running all the commands. In other words, localhost and 127.0.0.1 won't work here even if everything is running on the same machine.*
 
 #### Steps:
 1. Build containers inside each subdirectory:
