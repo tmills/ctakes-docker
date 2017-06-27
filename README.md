@@ -71,8 +71,11 @@ ctakes-as-pipeline> docker build -t ctakes-as-pipeline .
 
 8. Run descriptor: `Run->Run Aggregate with de-identification`
 
-9. Look at de-identified text and annotations with `Select View->DeidView`
+#### Output:
 
+In most cases, you'll want to view the de-identified text and annotations with `Select View->DeidView`. However, if you're operating in a programmatic context, an xmi file (among other formats) is available for processing.
+
+If you wish to view the annotations in an easy to use and visually rich viewer, run `$UIMA_HOME/bin/annotationViewer.sh` and select the descriptor used for processing, your outputted xmi file, and the Java Viewer.
 
 ### Running via collection reader
 If you want to run on a collection of files rather than through the debugger,
