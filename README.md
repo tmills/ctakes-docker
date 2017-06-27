@@ -24,7 +24,7 @@ rm uima-as-2.9.0*.gz
 export UIMA_HOME=/opt/apache-uima-as-2.9.0 # you'll want to store this in your .bashrc as well
 ```
 
-2. The SHARP de-identification model cannot be publicly released, and in fact, there are no publicly available models for Mist that I am aware of <a title="Please let us know if you are aware of any!"><sup>*</sup></a>. If you do not have access to SHARP (you probably do not), you have two options:
+2. The SHARP de-identification model cannot be publicly released, and in fact, there are no publicly available models for Mist that I am aware of (please let us know if you are aware of any!). If you do not have access to SHARP (you probably do not), you have two options:
 
  i) Use MIST and your own data to create your own model with the generic HIPAA framework. This is outside the scope of this readme and requires understanding Mist and its documentation. Installing that model and fixing the rest of the project to use it would look something like this:
 ```
@@ -33,7 +33,11 @@ sed -i 's/RUN\ mkdir\ src\/tasks\/SHARP/#RUN\ mkdir\ src\/tasks\/SHARP/'  mist/D
 sed -i 's/COPY\ SHARP\ src\/tasks\/SHARP/#COPY\ SHARP\ src\/tasks\/SHARP/' mist/Dockerfile
 sed -i 's/SHARP/HIPAA/' mist/MistAnalysisEngine.java
 ```
- ii) Skip de-identification. There are replacement pipelines that do not do de-identification. You will need to rebuild the ctakes-as-pipeline container, pointing it to the descriptor ``desc/nodeidPipeline.xml`` and when you run the CVD, point it to ``remoteNoDeid.xml.``
+ ii) Skip de-identification. There are replacement pipelines that do not do de-identification. You will need to rebuild the ctakes-as-pipeline container, pointing it to the descriptor ```desc/nodeidPipeline.xml``` and when you run the CVD, point it to ```remoteNoDeid.xml.```. Adjust the pipeline by running the following:
+```
+sed -i 's/dictionaryPipeline.xml/nodeidPipeline.xml/' ctakes-as-pipeline/Dockerfile
+sed -i 's/dictionaryPipeline.xml/nodeidPipeline.xml/' ctakes-as-pipeline/desc/deploymentDescriptor.xml
+```
 
 3. Copy env_file_sample.txt to env_file.txt and add your UMLS credentials and IP
 address and port of broker to appropriate environment variables.
@@ -41,7 +45,7 @@ address and port of broker to appropriate environment variables.
   *Note: The IP address must be visible from inside containers - something like the DHCP-assigned IP address of the host system running all the commands. In other words, localhost and 127.0.0.1 won't work here even if everything is running on the same machine.*
 
 #### Steps:
-1. Build containers inside each subdirectory:
+1. Build containers inside each subdirectory (note that if you are running without de-identification, you can skip the Mist steps):
 ```
 mist> docker build -t mist-container .
 amq-broker> docker build -t amq-image .
