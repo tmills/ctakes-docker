@@ -22,7 +22,8 @@
 <analysisEngineDescription xmlns="http://uima.apache.org/resourceSpecifier">
   <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
   <primitive>true</primitive>
-  <annotatorImplementationName>I2b2ReadyFileWriter<analysisEngineMetaData>
+  <annotatorImplementationName>I2b2ReadyFileWriter</annotatorImplementationName>
+  <analysisEngineMetaData>
     <name>I2b2ReadyFileWriter</name>
     <description>Writes the output of a cTAKES pipeline into a sql dump file that can be imported
         into an i2b2/Transmart instance.</description>
@@ -45,6 +46,11 @@
         </value>
       </nameValuePair>
     </configurationParameterSettings>
+		<typeSystemDescription>
+			<imports>
+				<import name="org.apache.ctakes.typesystem.types.TypeSystem" />
+			</imports>
+		</typeSystemDescription>
     <typePriorities/>
     <fsIndexCollection/>
     <capabilities/>

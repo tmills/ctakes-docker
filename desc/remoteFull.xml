@@ -9,6 +9,9 @@
         <delegateAnalysisEngine key="remoteFastDescriptor">
             <import location="docker-fast-dictionary.xml"/>
         </delegateAnalysisEngine>
+        <delegateAnalysisEngine key="remoteI2b2Writer">
+            <import location="docker-writer.xml"/>
+        </delegateAnalysisEngine>
     </delegateAnalysisEngineSpecifiers>
     <analysisEngineMetaData>
         <name>Aggregate with de-identification</name>
@@ -18,6 +21,7 @@
             <fixedFlow>
                 <node>remoteMist</node>
                 <node>remoteFastDescriptor</node>
+                <node>remoteI2b2Writer</node>
             </fixedFlow>
         </flowConstraints>
         <capabilities/>

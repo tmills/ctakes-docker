@@ -42,7 +42,7 @@ if [ ! -f $1 ]
   then echo "File '"$1"' does not exist";
        exit 1;
 fi;
-export UIMA_CLASSPATH="$CTAKES_HOME/lib":$CTAKES_HOME/resources
+export UIMA_CLASSPATH="$CTAKES_HOME/lib":$CTAKES_HOME/resources:/
 
 "$UIMA_HOME/bin/runUimaClass.sh" org.apache.uima.adapter.jms.service.UIMA_Service -saxonURL "file:$UIMA_HOME/saxon/saxon8.jar" -xslt "$UIMA_HOME/bin/dd2spring.xsl" -dd $@
 

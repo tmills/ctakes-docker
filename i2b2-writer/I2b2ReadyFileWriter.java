@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.cas.CASException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
@@ -30,7 +31,7 @@ import java.util.*;
 final public class I2b2ReadyFileWriter extends JCasAnnotator_ImplBase {
 
    static private final Logger LOGGER = Logger.getLogger( "I2b2ReadyFileWriter" );
-   static private final String CTAKES_VERSION = "CTAKES_3.2.3-SNAPSHOT";
+   static private final String CTAKES_VERSION = "CTAKES_4.0.0";
 
 
    static public final String PARAM_OUTPUTDIR = "OutputDirectory";
@@ -53,7 +54,8 @@ final public class I2b2ReadyFileWriter extends JCasAnnotator_ImplBase {
    static private final String MODIFIER_CD_BODY_LOCATION = "CUSTOM:BODY_LOCATION:";
    static private final String MODIFIER_CD_SEVERITY = "CUSTOM:SEVERITY:";
    static private final String MODIFIER_CD_DOC_TIME_REL = "CUSTOM:DOC_TIME_REL:";
-
+   
+   static private final String DEID_VIEW = "DeidView";
 
    /**
     * Name of configuration parameter that must be set to the path of a directory into which the
@@ -74,12 +76,17 @@ final public class I2b2ReadyFileWriter extends JCasAnnotator_ImplBase {
 
       final String patient = Long.toString( SourceMetadataUtil.getPatientNum( jcas ) );
       final SourceData sourceData = SourceMetadataUtil.getSourceData( jcas );
-      final String encounter = sourceData.getSourceEncounterId();
-      final String providerId = SourceMetadataUtil.getProviderId( sourceData );
+      final String encounter = sourceData==null?"null":sourceData.getSourceEncounterId();
+      final String providerId = sourceData==null?"null":SourceMetadataUtil.getProviderId( sourceData );
       // source date not used ???
 //      final String sourceDate = sourceData.getSourceOriginalDate();
-
-      final Collection<String> conceptLines = createConceptLines( jcas, patient, encounter, providerId );
+      JCas deidView = null;
+      try{
+        deidView = jcas.getView(DEID_VIEW);
+      }catch(CASException e){
+        throw new AnalysisEngineProcessException(e);
+      }
+      final Collection<String> conceptLines = createConceptLines( deidView, patient, encounter, providerId );
 
       final File outputFile = new File( _outputRootDir, encounter );
       saveAnnotations( outputFile, conceptLines );

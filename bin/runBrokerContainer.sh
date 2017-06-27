@@ -1,3 +1,3 @@
 #!/bin/bash
-
-docker run -d -p 61616:61616 amq-image
+. env_file.txt
+docker run -d -p $broker_port:61616 amq-image

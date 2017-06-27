@@ -21,6 +21,9 @@
             <remoteAnalysisEngine key="remoteFastDescriptor">
              <inputQueue endpoint="myQueueName" />
             </remoteAnalysisEngine>
+            <remoteAnalysisEngine key="remoteI2b2Writer">
+             <inputQueue endpoint="writerQueue" />
+            </remoteAnalysisEngine>
         </delegates>
         <asyncPrimitiveErrorConfiguration>
           <processCasErrors thresholdCount="0" thresholdWindow="0" thresholdAction="terminate"/>

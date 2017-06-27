@@ -23,6 +23,6 @@ COPY I2b2ReadyFileWriter.java /
 
 RUN javac -cp uimafit-core-2.2.0.jar:uimaj-core-2.9.0.jar:ctakes-type-system-4.0.0.jar:ctakes-core-4.0.0.jar:log4j-1.2.17.jar:javax.annotation-api-1.2.jar:. I2b2ReadyFileWriter.java
 
-RUN jar cf i2b2.jar I2b2ReadyFileWriter.class
+RUN jar cf i2b2.jar *.class
 
 CMD ./deployAsyncService.sh desc/deploymentDescriptor.xml -brokerURL "tcp://$broker_host:$broker_port"
