@@ -125,7 +125,7 @@
       <nameValuePair>
         <name>SqlStatement</name>
         <value>
-          <string>select encounter_num,patient_num,observation_blob,start_date,provider_id,modifier_cd,concept_cd,instance_num from I2B2_IMPORT.OBSERVATION_FACT where sourcesystem_cd='NOTES' and observation_blob is not null and rownum < 10</string>
+          <string>select encounter_num,patient_num,observation_blob,start_date,provider_id,modifier_cd,concept_cd,instance_num from I2B2_IMPORT.OBSERVATION_FACT where sourcesystem_cd='NOTES' and observation_blob is not null and rownum &lt; 10</string>
         </value>
       </nameValuePair>
       <nameValuePair>
