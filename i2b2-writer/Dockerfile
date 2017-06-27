@@ -19,7 +19,6 @@ COPY uimaj-core-2.9.0.jar /
 COPY ctakes-type-system-4.0.0.jar /
 COPY ctakes-core-4.0.0.jar /
 COPY log4j-1.2.17.jar /
-COPY javax.annotation-api-1.2.jar /
 COPY I2b2ReadyFileWriter.java /
 
 RUN javac -cp uimafit-core-2.2.0.jar:uimaj-core-2.9.0.jar:ctakes-type-system-4.0.0.jar:ctakes-core-4.0.0.jar:log4j-1.2.17.jar:javax.annotation-api-1.2.jar:. I2b2ReadyFileWriter.java
