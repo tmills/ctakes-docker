@@ -1,10 +1,10 @@
-FROM ubuntu:latest
+FROM openjdk:8-alpine
+
+RUN apk update && apk add ca-certificates openssl wget unzip python git perl
 
 ENV MIST_VER 1_3_1
 ENV MIST_HOME /MIST_1_3_1
 ENV UIMA_HOME=/apache-uima-as-2.9.0
-
-RUN apt-get -y update && apt-get -y install openjdk-8-jdk wget git zip python
 
 RUN wget -O MIST_1.3.1.zip "https://sourceforge.net/projects/mist-deid/files/MIST 1.3.1/MIST_1_3_1.zip/download"
 RUN unzip MIST_1.3.1.zip
