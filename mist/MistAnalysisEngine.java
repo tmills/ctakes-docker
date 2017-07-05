@@ -17,7 +17,7 @@ public class MistAnalysisEngine extends JCasAnnotator_ImplBase{
   public void process(JCas jCas) throws AnalysisEngineProcessException {
     try{
       JCas deidView = CasUtil.getView(jCas.getCas(), DEID_VIEW_NAME, true).getJCas();
-      
+
       File tempOut = File.createTempFile("deidfile", "mist");
 
       Process p = new ProcessBuilder(getCommand(tempOut.getAbsolutePath())).start();
@@ -36,6 +36,7 @@ public class MistAnalysisEngine extends JCasAnnotator_ImplBase{
         //System.err.println("Seeing input line: " + line);
         if(line.contains(": -")) continue;
         buff.append(line);
+        buff.append('\n');
       }
       deidView.setDocumentText(buff.toString());
     }catch(Exception e){
