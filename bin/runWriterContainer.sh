@@ -1,3 +1,4 @@
 #!/bin/bash
 
-docker run --env-file env_file.txt -d i2b2-writer
+mkdir -p outputs
+docker run --env-file env_file.txt -v ~/ctakes-docker/outputs/:/outputs -d i2b2-writer
