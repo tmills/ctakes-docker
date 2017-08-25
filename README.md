@@ -81,7 +81,7 @@ If you wish to view the annotations in an easy to use and visually rich viewer, 
 If you want to run on a collection of files rather than through the debugger,
 modify this sample pipeline. Perform the first 4 steps as above, then:
 
-5. `./bin/runRemoteAsyncAE.sh tcp://<local ip address>:61616 mainQueue -d desc/localDeploymentDescriptor.xml -c desc/FilesInDirectoryCollectionReader.xml -o xmis/`
+5. `UIMA_CLASSPATH=/path/to/ctakes-bin/lib ./bin/runRemoteAsyncAE.sh tcp://<local ip address>:61616 mainQueue -d desc/localDeploymentDescriptor.xml -c desc/FilesInDirectoryCollectionReader.xml -o xmis/`
 
 Replacing `<my ip address>` with the IP address of the host you are running the command on. This will read from the samples sub-directory and write the output to serialized xmi files in the xmis subdirectory. You can use the CVD as above to view the annotations of these files. To modify this for your data, edit the FilesInDirectoryCollectionReader.xml file to point at a folder on your machine, or use a completely different collection reader if you like.
 
