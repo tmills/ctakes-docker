@@ -15,13 +15,17 @@ These can be run together in an EC2 instance.
 ### Steps for running pipeline locally:
 
 #### Prerequisites:
-1. Install Apache UIMA-AS and set $UIMA_HOME:
+1. Install Apache UIMA-AS and cTAKES with the proper environment variables:
 ```
 cd /opt
 wget http://apache.mirrors.ovh.net/ftp.apache.org/dist//uima/uima-as-2.9.0/uima-as-2.9.0-bin.tar.gz
 tar -xvf uima-as-2.9.0-bin.tar.gz
-rm uima-as-2.9.0*.gz
+rm uima-as-2.9.0-bin.tar.gz
 export UIMA_HOME=/opt/apache-uima-as-2.9.0 # you'll want to store this in your .bashrc as well
+wget http://www-us.apache.org/dist//ctakes/ctakes-4.0.0/apache-ctakes-4.0.0-bin.tar.gz
+tar -xvf apache-ctakes-4.0.0-bin.tar.gz
+rm apache-ctakes-4.0.0-bin.tar.gz
+export UIMA_CLASSPATH=/opt/apache-ctakes-4.0.0/lib # you'll want to store this in your .bashrc as well
 ```
 
 2. The SHARP de-identification model cannot be publicly released, and in fact, there are no publicly available models for Mist that I am aware of (please let us know if you are aware of any!). If you do not have access to SHARP (you probably do not), you have two options:
@@ -78,13 +82,15 @@ In most cases, you'll want to view the de-identified text and annotations with `
 If you wish to view the annotations in an easy to use and visually rich viewer, run `$UIMA_HOME/bin/annotationViewer.sh` and select the descriptor used for processing, your outputted xmi file, and the Java Viewer.
 
 ### Running via collection reader
-If you want to run on a collection of files rather than through the debugger,
-modify this sample pipeline. Perform the first 4 steps as above, then:
+If you want to run on a collection of files rather than through the debugger, modify this sample pipeline. Perform the first 4 steps as above, then:
 
-5. `./bin/runRemoteAsyncAE.sh tcp://<local ip address>:61616 mainQueue -d desc/localDeploymentDescriptor.xml -c desc/FilesInDirectoryCollectionReader.xml -o xmis/`
+1. Edit `desc/docker-fast-dictionary.xml` and change `<import location="/where/you/installed/ctakes-docker/desc/remoteFastDescriptor.xml"/>` to the proper location.
 
-Replacing `<my ip address>` with the IP address of the host you are running the command on. This will read from the samples sub-directory and write the output to serialized xmi files in the xmis subdirectory. You can use the CVD as above to view the annotations of these files. To modify this for your data, edit the FilesInDirectoryCollectionReader.xml file to point at a folder on your machine, or use a completely different collection reader if you like.
+2. Edit `desc/FilesInDirectoryCollectionReader.xml` and change `<string>samples/</string>` to the location that unstructured clinical text files will be placed for processing.
 
+3. Run `./bin/runRemoteAsyncAE.sh tcp://<local ip address>:61616 mainQueue -d desc/localDeploymentDescriptor.xml -c desc/FilesInDirectoryCollectionReader.xml -o xmis/`. Note that `local ip address` is the address of the host you are running the command on.
+
+4. Observe the outputted XMI in `xmis/`. You may use `CVD` to import the files if you want a visually rich experience.
 
 ### Running on ec2
 If you install docker on an ec2 instance and check out this repo, you can build
