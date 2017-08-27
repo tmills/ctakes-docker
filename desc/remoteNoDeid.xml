@@ -8,7 +8,7 @@
         </delegateAnalysisEngine>
     </delegateAnalysisEngineSpecifiers>
     <analysisEngineMetaData>
-        <name>Aggregate with de-identification</name>
+        <name>Aggregate without de-identification</name>
         <configurationParameters/>
         <configurationParameterSettings/>
         <flowConstraints>
