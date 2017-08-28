@@ -37,7 +37,7 @@ sed -i'.bak' 's/RUN\ mkdir\ src\/tasks\/SHARP/#RUN\ mkdir\ src\/tasks\/SHARP/'  
 sed -i'.bak' 's/COPY\ SHARP\ src\/tasks\/SHARP/#COPY\ SHARP\ src\/tasks\/SHARP/' mist/Dockerfile
 sed -i'.bak' 's/SHARP/HIPAA/' mist/MistAnalysisEngine.java
 ```
- ii) Skip de-identification. There are replacement pipelines that do not do de-identification. You will need to rebuild the ctakes-as-pipeline container, pointing it to the descriptor ```desc/nodeidPipeline.xml``` and when you run the CVD, point it to ```remoteNoDeid.xml.```. Adjust the pipeline by running the following:
+ ii) Skip de-identification. There are replacement pipelines that do not do de-identification. You will need to rebuild the ctakes-as-pipeline container, pointing it to the descriptor ```desc/nodeidPipeline.xml``` and when you run the CVD, point it to ```remoteNoDeid.xml``` instead of ```remoteFull.xml```. Adjust the pipeline by running the following:
 ```
 sed -i'.bak' 's/dictionaryPipeline.xml/nodeidPipeline.xml/' ctakes-as-pipeline/Dockerfile
 sed -i'.bak' 's/dictionaryPipeline.xml/nodeidPipeline.xml/' ctakes-as-pipeline/desc/deploymentDescriptor.xml
