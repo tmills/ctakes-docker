@@ -3,7 +3,7 @@
     <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
     <primitive>false</primitive>
     <delegateAnalysisEngineSpecifiers>
-        <delegateAnalysisEngine key="remoteFastDescriptor">
+        <delegateAnalysisEngine key="dockerFastDictionary">
             <import location="docker-fast-dictionary.xml"/>
         </delegateAnalysisEngine>
     </delegateAnalysisEngineSpecifiers>
@@ -13,7 +13,7 @@
         <configurationParameterSettings/>
         <flowConstraints>
             <fixedFlow>
-                <node>remoteFastDescriptor</node>
+                <node>dockerFastDictionary</node>
             </fixedFlow>
         </flowConstraints>
         <capabilities/>
@@ -23,5 +23,4 @@
             <outputsNewCASes>false</outputsNewCASes>
         </operationalProperties>
     </analysisEngineMetaData>
-
 </analysisEngineDescription>

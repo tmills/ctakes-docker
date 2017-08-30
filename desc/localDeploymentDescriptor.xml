@@ -18,7 +18,7 @@
             <remoteAnalysisEngine key="remoteMist">
              <inputQueue endpoint="mistQueue" />
             </remoteAnalysisEngine>
-            <remoteAnalysisEngine key="remoteFastDescriptor">
+            <remoteAnalysisEngine key="dockerFastDictionary">
              <inputQueue endpoint="myQueueName" />
             </remoteAnalysisEngine>
             <remoteAnalysisEngine key="remoteI2b2Writer">

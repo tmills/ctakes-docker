@@ -6,7 +6,7 @@
         <delegateAnalysisEngine key="remoteMist">
             <import location="docker-mist.xml"/>
         </delegateAnalysisEngine>
-        <delegateAnalysisEngine key="remoteFastDescriptor">
+        <delegateAnalysisEngine key="dockerFastDictionary">
             <import location="docker-fast-dictionary.xml"/>
         </delegateAnalysisEngine>
         <delegateAnalysisEngine key="remoteI2b2Writer">
@@ -20,7 +20,7 @@
         <flowConstraints>
             <fixedFlow>
                 <node>remoteMist</node>
-                <node>remoteFastDescriptor</node>
+                <node>dockerFastDictionary</node>
                 <node>remoteI2b2Writer</node>
             </fixedFlow>
         </flowConstraints>

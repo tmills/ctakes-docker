@@ -15,7 +15,7 @@
         <scaleout numberOfInstances="1"/>
 
         <delegates>
-            <remoteAnalysisEngine key="remoteFastDescriptor">
+            <remoteAnalysisEngine key="dockerFastDictionary">
              <inputQueue endpoint="myQueueName" />
             </remoteAnalysisEngine>
         </delegates>

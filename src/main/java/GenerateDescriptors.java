@@ -9,7 +9,6 @@ public class GenerateDescriptors{
     public static void main(String[] args) throws Exception {
         AggregateBuilder builder = new AggregateBuilder();
         builder.add(AnalysisEngineFactory.createEngineDescriptionFromPath("desc/remoteMist.xml"));
-        builder.add(AnalysisEngineFactory.createEngineDescriptionFromPath("desc/remoteFastDescriptor.xml"), "DeidView", CAS.NAME_DEFAULT_SOFA);
 
         AnalysisEngineDescription aed = builder.createAggregateDescription();
         aed.toXML(new FileWriter(args[0]));
