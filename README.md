@@ -84,7 +84,7 @@ If you wish to view the annotations in an easy to use and visually rich viewer, 
 ### Running via collection reader
 If you want to run on a collection of files rather than through the debugger, modify this sample pipeline. Perform the first 4 steps as above, then:
 
-1. Edit `desc/docker-fast-dictionary.xml` and change `<import location="/where/you/installed/ctakes-docker/desc/remoteFastDescriptor.xml"/>` to the proper location.
+1. Edit `desc/remoteFastDescriptor.xml` and change `<import location="/Users/tmill/Projects/apache-ctakes/ctakes-clinical-pipeline/desc/analysis_engine/docker-fast-dictionary.xml"/>` to your absolute location.
 
 2. Edit `desc/FilesInDirectoryCollectionReader.xml` and change `<string>samples/</string>` to the location that unstructured clinical text files will be placed for processing.
 
