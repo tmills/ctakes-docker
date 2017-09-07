@@ -111,9 +111,9 @@ If you want to use other dictionaries alongside the default SNOMED/RXNORM, perfo
 - [Dictionary Creator GUI Tool](https://cwiki.apache.org/confluence/display/CTAKES/Dictionary+Creator+GUI)
 - [Tutorial on Creating an ICD10 Dictionary](https://www.youtube.com/watch?v=4aOnafv-NQs)
 
-2. Once you have your dictionaries, place the xml files and corresponding directories in the `./ctakes-as-pipeline` area.
+2. Once you have your dictionaries, place the appropriately named directories in the `./ctakes-as-pipeline` area.
 
-3. Uncomment and edit `./ctakes-as-pipeline/Dockerfile`'s `other_dictionary` with your dictionary (copy/paste segments if you have more than one dictionary). This will copy in the relevant files/directories.
+3. Uncomment and edit `./ctakes-as-pipeline/Dockerfile`'s `other_dictionary` with your dictionary (copy/paste segments if you have more than one dictionary). This will copy in the relevant dictionary directories.
 
 4. Edit `./ctakes-as-pipeline/UmlsLookupAnnotator.xml`'s `DefaultDictionaryLookupSpec.xml` to be `MultipleDictionaryLookupSpec.xml`.
 
