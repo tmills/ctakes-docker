@@ -101,3 +101,22 @@ the broker container:
 
 then you change the env_file.txt to point to port 80 and the other scripts
 should work as before.
+
+### Running with custom dictionaries
+If you want to use other dictionaries alongside the default SNOMED/RXNORM, perform the steps below:
+
+1. Review the following artifacts to see what your options are in terms of obtaining relevant dictionaries:
+
+- [Obtaining Prebuilt Dictionaries section (ignore other sections)](https://cwiki.apache.org/confluence/display/CTAKES/cTAKES+3.2+Dictionaries+and+Models) (note ICD isn't functional at this time)
+- [Dictionary Creator GUI Tool](https://cwiki.apache.org/confluence/display/CTAKES/Dictionary+Creator+GUI)
+- [Tutorial on Creating an ICD10 Dictionary](https://www.youtube.com/watch?v=4aOnafv-NQs)
+
+2. Once you have your dictionaries, place the appropriately named directories in the `./ctakes-as-pipeline` area.
+
+3. Uncomment and edit `./ctakes-as-pipeline/Dockerfile`'s `other_dictionary` with your dictionary (copy/paste segments if you have more than one dictionary). This will copy in the relevant dictionary directories.
+
+4. Edit `./ctakes-as-pipeline/UmlsLookupAnnotator.xml`'s `DefaultDictionaryLookupSpec.xml` to be `MultipleDictionaryLookupSpec.xml`.
+
+5. Using the `./ctakes-as-pipeline/MultipleDictionaryLookupSpecExample.xml` as inspiration, edit the contents to reflect your multiple dictionary configurations. Remove `Example` from file name upon completion.
+
+6. Edit `./ctakes-as-pipeline/Dockerfile`'s `DefaultDictionaryLookupSpec.xml` to be `MultipleDictionaryLookupSpec.xml`.
