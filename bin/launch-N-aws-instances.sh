@@ -13,7 +13,7 @@ iType=m4.large
 #
 iId=ami-xxxxxxxx
 key=YOURKEYNAME
-sGroup=sg-xxxxxxxx
+sGroup=sg-"sg-xxxxxxxx sg-zzzzzzzz"
 subnetId=subnet-xxxxxxxx
 
 
@@ -42,11 +42,11 @@ fi
 
 echo "Launching $1 instances from image $iId using command:"
 
-echo "aws ec2  run-instances  --image-id $iId  --count $1 --instance-type $iType --key-name $key --security-group-ids  $sgroup  $dryRun  --user-data '#!/bin/bash 
+echo "aws ec2  run-instances  --image-id $iId  --count $1 --instance-type $iType --key-name $key --security-group-ids  $sGroup  $dryRun  --user-data '#!/bin/bash 
 /home/ubuntu/ctakes-docker/start.ae.containers.sh' "
 
 # Note that the user-data is a 2-line script, with the first line being the standard bash script header
-aws ec2  run-instances  --image-id $iId  --count $1 --instance-type $iType --key-name $key --security-group-ids  $sgroup  $dryRun  --user-data '#!/bin/bash 
+aws ec2  run-instances  --image-id $iId  --count $1 --instance-type $iType --key-name $key --security-group-ids  $sGroup  $dryRun  --user-data '#!/bin/bash 
 /home/ubuntu/ctakes-docker/start.ae.containers.sh' 
 
 echo
