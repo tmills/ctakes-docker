@@ -13,7 +13,7 @@ iType=m4.large
 #
 iId=ami-xxxxxxxx
 key=YOURKEYNAME
-sGroup=sg-"sg-xxxxxxxx sg-zzzzzzzz"
+sGroup="sg-xxxxxxxx sg-zzzzzzzz"
 subnetId=subnet-xxxxxxxx
 
 
