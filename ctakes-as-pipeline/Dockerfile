@@ -32,5 +32,6 @@ RUN jar cf consumer.jar DeidAwareTermConsumer.class
 
 ENV UIMA_HOME=/apache-uima-as-2.9.0
 ENV CTAKES_HOME=/apache-ctakes-4.0.0
+ENV UIMA_JVM_OPTS="-Xms2G -Xmx5G"
 
 CMD ./deployAsyncService.sh desc/deploymentDescriptor.xml -brokerURL "tcp://$broker_host:$broker_port"
