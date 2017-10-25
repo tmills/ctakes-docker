@@ -39,10 +39,10 @@ def main(args):
     WRITER_AMI = config_map['WRITER_AMI']
     WRITER_MACHINE = config_map['WRITER_MACHINE']
     WRITER_REPLICATION = int(config_map['WRITER_REPLICATION'])
-    key_pair = config_map['key_pair']
+    #key_pair = config_map['key_pair']
     key_file = config_map['key_file']
-    security_groups = config_map['security_groups'].split(',')
-    subnet_id = config_map['subnet_id']
+    #security_groups = config_map['security_groups'].split(',')
+    #subnet_id = config_map['subnet_id']
     out_fn = config_map['id_file']
 
     ## TODO - Allow this to be defined in the properties file
@@ -63,7 +63,7 @@ def main(args):
     fout = open(out_fn, 'w')
 
     ## Start the broker instance:
-    broker_instances = start_instances(BROKER_AMI, 1, BROKER_MACHINE, "NLP-Broker-Autostart")
+    broker_instances = start_instances(BROKER_AMI, 1, BROKER_MACHINE, config_map, "NLP-Broker-Autostart")
     log_instances(broker_instances, fout)
     broker_id = broker_instances['Instances'][0]['InstanceId']
     broker_instance = ec2r.Instance(broker_id)
@@ -83,22 +83,22 @@ def main(args):
     #call(['scp', '-i', key_file, env_file.name, '%s:/home/ubuntu/ctakes-docker/env_file.txt' % broker_public_ip])
 
     ## Start the broker:
-    run_command_on_instances(broker_instances, 'ctakes-docker/bin/runBrokerContainer.sh', env_file)
+    run_command_on_instances(broker_instances, 'ctakes-docker/bin/runBrokerContainer.sh', env_file, key_file)
 
     ## start the mist instance(s):
-    mist_instances = start_instances(MIST_AMI, MIST_REPLICATION, MIST_MACHINE, "NLP-Mist-Autostart")
+    mist_instances = start_instances(MIST_AMI, MIST_REPLICATION, MIST_MACHINE, config_map, "NLP-Mist-Autostart")
     log_instances(mist_instances, fout)
-    run_command_on_instances(mist_instances, "ctakes-docker/bin/runMistContainer.sh", env_file)
+    run_command_on_instances(mist_instances, "ctakes-docker/bin/runMistContainer.sh", env_file, key_file)
 
     ## start the ctakes instance:
-    pipeline_instances = start_instances(PIPELINE_AMI, PIPELINE_REPLICATION, PIPELINE_MACHINE, "NLP-Pipeline-Autostart")
+    pipeline_instances = start_instances(PIPELINE_AMI, PIPELINE_REPLICATION, PIPELINE_MACHINE, config_map, "NLP-Pipeline-Autostart")
     log_instances(pipeline_instances, fout)
-    run_command_on_instances(pipeline_instances, "ctakes-docker/bin/runPipelineContainer.sh", env_file)
+    run_command_on_instances(pipeline_instances, "ctakes-docker/bin/runPipelineContainer.sh", env_file, key_file)
 
     ## start the i2b2 writer instance:
-    writer_instances = start_instances(WRITER_AMI, WRITER_REPLICATION, WRITER_MACHINE, "NLP-Writer-Autostart")
+    writer_instances = start_instances(WRITER_AMI, WRITER_REPLICATION, WRITER_MACHINE, config_map, "NLP-Writer-Autostart")
     log_instances(writer_instances, fout)
-    run_command_on_instances(writer_instances, "ctakes-docker/bin/runWriterContainer.sh", env_file)
+    run_command_on_instances(writer_instances, "ctakes-docker/bin/runWriterContainer.sh", env_file, key_file)
 
     env_file.close()
     fout.close()
@@ -110,7 +110,7 @@ def log_instances(instances, fout):
         inst_id = instance['InstanceId']
         fout.write('instance_id=%s\n' % (inst_id)); fout.flush()
 
-def run_command_on_instances(instances, command, env_file):
+def run_command_on_instances(instances, command, env_file, key_file):
     ec2r = boto3.resource('ec2')
 
     ssh = SSHClient()
@@ -121,7 +121,7 @@ def run_command_on_instances(instances, command, env_file):
         instance_obj.reload()
         inst_ip = instance_obj.public_dns_name
         sys.stderr.write("Copying env_file.txt to host...\n")
-        call(['scp', '-i', key_file, env_file.name, 'ubuntu@%s:/home/ubuntu/ctakes-docker/env_file.txt' % inst_ip])
+        call(['scp', '-i', key_file, env_file.name, 'ubuntu@%s:/home/ubuntu/env_file.txt' % inst_ip])
         time.sleep(2)
         sys.stderr.write("Running command %s on remote host...\n" % (command))
         ssh.connect(inst_ip, username='ubuntu', key_filename=key_file)
@@ -132,13 +132,13 @@ def run_command_on_instances(instances, command, env_file):
         sys.stderr.write('Startup standard output\n%s:Startup standard error:\n%s\n' % (output, error))
         ssh.close()
 
-def start_instances(ami, count, inst_type, tag_name="NLP_Auto_Start"):
+def start_instances(ami, count, inst_type, config, tag_name="NLP_Auto_Start"):
     global ec2
     instances = ec2.run_instances(ImageId=ami,
                                 MinCount=1,
                                 MaxCount=count,
                                 InstanceType=inst_type,
-                                KeyName=key_pair,
+                                KeyName=config['key_pair'],
                                 TagSpecifications=[
                                     {'ResourceType':'instance',
                                      'Tags':[
@@ -146,8 +146,8 @@ def start_instances(ami, count, inst_type, tag_name="NLP_Auto_Start"):
                                             {'Key':'ScriptStart', 'Value':script_time}
                                         ]
                                     }],
-                                SubnetId=subnet_id,
-                                SecurityGroupIds=security_groups
+                                SubnetId=config['subnet_id'],
+                                SecurityGroupIds=config['security_groups'].split(',')
                                 )
     wait_for_all_to_run(instances)
     return instances
