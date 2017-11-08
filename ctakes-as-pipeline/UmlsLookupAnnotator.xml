@@ -88,7 +88,7 @@
          <nameValuePair>
             <name>DictionaryDescriptor</name>
             <value>
-              <string>org/apache/ctakes/dictionary/lookup/fast/DefaultDictionaryLookupSpec.xml</string>
+              <string>org/apache/ctakes/dictionary/lookup/fast/sno_rx_16ab.xml</string>
             </value>
          </nameValuePair>
       </configurationParameterSettings>
