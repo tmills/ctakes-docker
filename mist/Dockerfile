@@ -23,14 +23,16 @@ RUN src/MAT/bin/MATManagePluginDirs install src/tasks/SHARP
 ## Copy over the UIMA annotator and descriptor files
 WORKDIR /
 
-COPY MistAnalysisEngine.java /
 COPY mistDescriptor.xml /
 COPY mistDeploymentDescriptor.xml /
 COPY deployAsyncService.sh /
 COPY uimafit-core-2.2.0.jar /
 COPY uimaj-core-2.9.0.jar /
 COPY commons-lang-2.6.jar /
-RUN javac -cp uimafit-core-2.2.0.jar:uimaj-core-2.9.0.jar:. MistAnalysisEngine.java
+COPY jcarafe_xmlrpc-0.9.2-bin.jar /
+COPY MistAnalysisEngine.java /
+
+RUN javac -cp uimafit-core-2.2.0.jar:uimaj-core-2.9.0.jar:jcarafe_xmlrpc-0.9.2-bin.jar:. MistAnalysisEngine.java
 RUN jar cf mist.jar MistAnalysisEngine.class
 
 CMD ./deployAsyncService.sh mistDeploymentDescriptor.xml -brokerURL "tcp://$broker_host:$broker_port"
