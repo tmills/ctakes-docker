@@ -44,7 +44,6 @@ public class MistAnalysisEngine extends JCasAnnotator_ImplBase{
       JCas deidView = CasUtil.getView(jCas.getCas(), DEID_VIEW_NAME, true).getJCas();
 
       String text = jCas.getDocumentText();
-      List<Element> elementList = FastTokenizer.parseString(text);
 
       String decoderOut = decoder.decodeString(text);
 
