@@ -6,7 +6,6 @@ import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.jcas.JCas;
 
 import java.io.FileWriter;
-import java.util.List;
 
 /**
  * Created by tmill on 2/21/18.
@@ -34,7 +33,12 @@ public class IgnorableSectionAnnotator extends JCasAnnotator_ImplBase {
                 if(Character.isWhitespace(c)) ws++;
             }
             other = line.length() - alpha - digit - ws;
-            float letterRatio = (float) alpha / line.length();
+            double letterRatio = 0.0;
+            if(line.length() > 0) {
+                letterRatio = (float) alpha / line.length();
+            }
+
+//            System.err.println("Found line with prev=" + prevIgnorable + ", letterRatio=" + letterRatio + ", length=" + line.length());
 
             // get classification for this line:
             boolean ignorable = getJriprClassification(prevIgnorable, letterRatio, line.length());
@@ -42,17 +46,29 @@ public class IgnorableSectionAnnotator extends JCasAnnotator_ImplBase {
             if(ignorable){
                 if(!prevIgnorable){
                     // just starting ignorable section -- create ignorable segment:
+                    // first move forward start pointer if it's pointing at whitespace:
+                    while(Character.isWhitespace(text.charAt(currentSegmentStart))){
+                        currentSegmentStart++;
+                    }
                     Segment seg = new Segment(jCas, currentSegmentStart, currentSegmentEnd);
                     seg.addToIndexes();
                 }
                 // in the middle of an ignorable section. update segmentStart
-                currentSegmentStart += line.length() + 1;
+                currentSegmentStart = currentSegmentEnd + line.length() + 1;
                 currentSegmentEnd = currentSegmentStart;
             }else if(!ignorable){
                 // segment start will be correct -- but we can move the end pointer to the end of this line.
                 // updated so we need to update only segment end
                 currentSegmentEnd += line.length() + 1;
             }
+            prevIgnorable = ignorable;
+        }
+        while(Character.isWhitespace(text.charAt(currentSegmentStart))){
+            currentSegmentStart++;
+        }
+        if(currentSegmentEnd > currentSegmentStart) {
+            Segment endSeg = new Segment(jCas, currentSegmentStart, currentSegmentEnd);
+            endSeg.addToIndexes();
         }
     }
 
@@ -61,7 +77,7 @@ public class IgnorableSectionAnnotator extends JCasAnnotator_ImplBase {
         Somewhat simpler than a decision tree. The comments below are my rough interpretation of what
         each rule is doing if I can figure out the logic.
      */
-    private static boolean getJriprClassification(boolean prev, float letterRatio, int sentLength){
+    private static boolean getJriprClassification(boolean prev, double letterRatio, int sentLength){
         // if the previous line was ignorable, the next lien has content, but low letter ratio, this line is ignorable too.
         if(prev && sentLength > 2 && letterRatio <= 0.72) return true;
         // if prev line was ignorable, but letter ratio not high enough, then also ignorable.

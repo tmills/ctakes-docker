@@ -24,11 +24,14 @@ RUN mkdir /desc
 COPY deployAsyncService.sh /
 COPY desc/deploymentDescriptor.xml /desc/
 COPY desc/dictionaryPipeline.xml /desc/
+COPY desc/NonIgnorableSegmentAnnotator.xml /apache-ctakes-4.0.0/desc/
 COPY DeidAwareTermConsumer.java /
+COPY IgnorableSectionAnnotator.java /
 COPY lookup-descriptor-template.xml /apache-ctakes-4.0.0/resources/org/apache/ctakes/dictionary/lookup/fast/sno_rx_16ab.xml
 
 RUN javac -cp /apache-ctakes-4.0.0/lib/uimaj-core-2.9.0.jar:/apache-ctakes-4.0.0/lib/ctakes-dictionary-lookup-fast-4.0.0.jar:/apache-ctakes-4.0.0/lib/ctakes-core-4.0.0.jar:/apache-ctakes-4.0.0/lib/ctakes-type-system-4.0.0.jar:/apache-ctakes-4.0.0/lib/uimafit-core-2.2.0.jar DeidAwareTermConsumer.java
-RUN jar cf consumer.jar DeidAwareTermConsumer.class
+RUN javac -cp /apache-ctakes-4.0.0/lib/uimaj-core-2.9.0.jar:/apache-ctakes-4.0.0/lib/ctakes-dictionary-lookup-fast-4.0.0.jar:/apache-ctakes-4.0.0/lib/ctakes-core-4.0.0.jar:/apache-ctakes-4.0.0/lib/ctakes-type-system-4.0.0.jar:/apache-ctakes-4.0.0/lib/uimafit-core-2.2.0.jar IgnorableSectionAnnotator.java
+RUN jar cf consumer.jar DeidAwareTermConsumer.class IgnorableSectionAnnotator.class
 
 ENV UIMA_HOME=/apache-uima-as-2.9.0
 ENV CTAKES_HOME=/apache-ctakes-4.0.0

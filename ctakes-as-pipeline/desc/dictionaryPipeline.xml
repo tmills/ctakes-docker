@@ -71,8 +71,8 @@
     <delegateAnalysisEngine key="AdjustNounPhraseToIncludeFollowingPPNP">
       <import location="/apache-ctakes-4.0.0/desc/ctakes-chunker/desc/AdjustNounPhraseToIncludeFollowingPPNP.xml"/>
     </delegateAnalysisEngine>
-    <delegateAnalysisEngine key="SimpleSegmentAnnotator">
-      <import location="/apache-ctakes-4.0.0/desc/ctakes-clinical-pipeline/desc/analysis_engine/SimpleSegmentAnnotator.xml"/>
+    <delegateAnalysisEngine key="NonIgnorableSegmentAnnotator">
+      <import location="/apache-ctakes-4.0.0/desc/NonIgnorableSegmentAnnotator.xml"/>
     </delegateAnalysisEngine>
     <delegateAnalysisEngine key="POSTagger">
       <import location="/apache-ctakes-4.0.0/desc/ctakes-pos-tagger/desc/POSTagger.xml"/>
@@ -89,16 +89,6 @@
     <version/>
     <vendor/>
     <configurationParameters searchStrategy="language_fallback">
-      <configurationParameter>
-        <name>SegmentID</name>
-        <description/>
-        <type>String</type>
-        <multiValued>false</multiValued>
-        <mandatory>false</mandatory>
-        <overrides>
-          <parameter>SimpleSegmentAnnotator/SegmentID</parameter>
-        </overrides>
-      </configurationParameter>
       <configurationParameter>
         <name>ChunkCreatorClass</name>
         <type>String</type>
@@ -119,7 +109,7 @@
     </configurationParameterSettings>
     <flowConstraints>
       <fixedFlow>
-        <node>SimpleSegmentAnnotator</node>
+        <node>NonIgnorableSegmentAnnotator</node>
         <node>SentenceDetectorAnnotator</node>
         <node>TokenizerAnnotator</node>
         <node>ContextDependentTokenizerAnnotator</node>
@@ -216,7 +206,7 @@
   <resourceManagerConfiguration/>
   <sofaMappings>
       <sofaMapping>
-          <componentKey>SimpleSegmentAnnotator</componentKey>
+          <componentKey>NonIgnorableSegmentAnnotator</componentKey>
           <componentSofaName>_InitialView</componentSofaName>
           <aggregateSofaName>DeidView</aggregateSofaName>
       </sofaMapping>
