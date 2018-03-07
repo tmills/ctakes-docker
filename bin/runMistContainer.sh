@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker run --env-file env_file.txt -d mist-container
+docker run --name mist  --env-file env_file.txt -d mist-image
