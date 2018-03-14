@@ -22,18 +22,6 @@ then
   exit 1
 fi
 
-if [ "$ctakes_umlsuser" = "" ]
-then
-  echo ctakes_umlsuser environment variable is not set
-  exit 1
-fi
-
-if [ "$ctakes_umlspw" = "" ]
-then
-  echo ctakes_umlspw environment variable is not set
-  exit 1
-fi
-
 if [ $# -lt 1 ]
   then echo "You must specify one or more deployment descriptors.  Usage: deployAsyncService.sh file-path-of-deployment-descriptor [another-dd ...]"
        exit 1;

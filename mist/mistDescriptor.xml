@@ -25,7 +25,7 @@
 <annotatorImplementationName>MistAnalysisEngine</annotatorImplementationName>
 <analysisEngineMetaData>
 <name>MistDeidentifierAnnotator</name>
-<description>Pipes the text from the default JCas view through a java subprocess into the Mist de-identification tool
+<description>Runs the text from the default JCas view through the Mist de-identification tool
 and creates a new view with the de-identified version of the text.</description>
 <version>0.1</version>
 <vendor>Boston Children's Hospital</vendor>

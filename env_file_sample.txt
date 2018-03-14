@@ -1,7 +1,6 @@
-ctakes_umlsuser=CHANGEME
-ctakes_umlspw=CHANGEME
 ## Remember that localhost is relative to container so it probably needs to be
 ## changed since the broker will be in another container.
 broker_host=localhost
 ## Normal port is 61616 but it can be changed for your firewall setup
 broker_port=61616
+#

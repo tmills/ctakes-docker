@@ -9,7 +9,7 @@
     <service>
       <inputQueue endpoint="writerQueue" prefetch="0"/>
       <topDescriptor>
-<import location="i2b2Writer.xml"/>
+<import location="i2b2ReadyFileWriter.xml"/>
       </topDescriptor>
       <analysisEngine async="false">
         <scaleout numberOfInstances="1"/>

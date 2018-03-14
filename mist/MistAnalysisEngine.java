@@ -43,7 +43,7 @@ public class MistAnalysisEngine extends JCasAnnotator_ImplBase{
     try{
       JCas deidView = CasUtil.getView(jCas.getCas(), DEID_VIEW_NAME, true).getJCas();
 
-      String text = jCas.getDocumentText();
+      String text = jCas.getDocumentText().replace("<","&lt;").replace(">","&gt;"); //String text = jCas.getDocumentText().replaceAll("<","&lt;").replaceAll(">","&gt;");
 
       String decoderOut = decoder.decodeString(text);
 

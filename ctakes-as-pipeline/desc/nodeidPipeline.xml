@@ -80,7 +80,7 @@
 
   </delegateAnalysisEngineSpecifiers>
   <analysisEngineMetaData>
-    <name>AggregatePlaintextFastUMLSProcessor</name>
+    <name>AggregatePlaintextFastUMLSProcessor using default view</name>
     <description>Runs the complete pipeline for annotating clinical documents in plain text format using the
         built in UMLS (SNOMEDCT and RxNORM) dictionaries.
         This uses the database in resources/org/apache/ctakes/dictionary/lookup/fast/ctakessnorx and requires an UMLS license.
