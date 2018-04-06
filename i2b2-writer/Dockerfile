@@ -10,8 +10,8 @@ RUN mkdir /outputs
 
 COPY deployAsyncService.sh /
 COPY desc/deploymentDescriptor.xml /desc/
-COPY desc/deploymentDescriptorDbWriter.xml /desc/
-COPY desc/deploymentDescriptorFileWriter.xml /desc/
+#COPY desc/deploymentDescriptorDbWriter.xml /desc/
+#COPY desc/deploymentDescriptorFileWriter.xml /desc/
 
 ENV UIMA_HOME=/apache-uima-as-2.9.0
 ENV CTAKES_HOME=/apache-ctakes-4.0.0

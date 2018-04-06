@@ -112,7 +112,7 @@ abstract public class AbstractJdbcWriter extends JCasAnnotator_ImplBase {
    @Override
    public void initialize(UimaContext context) throws ResourceInitializationException {
       super.initialize(context);
-      LOGGER.setLevel(Level.INFO);
+      //LOGGER.setLevel(Level.INFO);
       final Connection connection = jdbcConnectionResource.getConnection();
       final Collection<TableInfo> tableInfos = getTableInfos();
       try {

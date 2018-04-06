@@ -111,7 +111,7 @@ public class I2b2JdbcWriter extends AbstractJdbcWriter {
    @Override
    public void initialize(UimaContext context) throws ResourceInitializationException {
       super.initialize(context);
-      LOGGER.setLevel(Level.INFO);
+      //LOGGER.setLevel(Level.INFO);
       LOGGER.warn("Table name = " + tableName);
    }
 
