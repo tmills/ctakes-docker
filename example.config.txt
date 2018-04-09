@@ -1,0 +1,50 @@
+[default]
+	
+# The project name will be added to the instances as a Tag so you can filter in the AWS GUI
+# to see just the instances being used by your project.
+# Maximum value length is 255 Unicode characters in UTF-8
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html?icmpid=docs_ec2_console
+# There isn't a separate version Tag set - you can include a version number here within the project name 
+project="My example project"
+user=me
+
+ctakes_umlsuser=XXX
+ctakes_umlspw=XXX
+
+input_table_name=XXX
+output_table_name=XXX
+oracle_url=XXX
+oracle_user=XXX
+oracle_pw=XXX
+
+# You might want to change the value for BROKER_MACHINE if you have many many to process
+BROKER_AMI=XXX        ## Ami number for your broker machine
+BROKER_MACHINE=XXX    ## aws machine type, e.g. m4.large
+MIST_AMI=XXX
+MIST_MACHINE=XXX
+MIST_REPLICATION=1
+PIPELINE_AMI=XXX
+PIPELINE_MACHINE=XXX
+PIPELINE_REPLICATION=1
+WRITER_AMI=XXX
+WRITER_MACHINE=XXX
+WRITER_REPLICATION=1
+
+# If you are on Windows with typical setup then if you have a directory C:\MyPrivateData\keys\my.pem you
+# can use key_file=C:/MyPrivateData/keys/my.pem but you cannot skip the C: part.
+key_file= #.pem file
+key_pair= # aws name for key pair
+
+# The program creates a file containing the instance IDs that were launched
+# The name of the file is combination of the id_file_prefix, a datetime stamp, and the id_file_suffix
+# If run on March 29 2018, the following will create a file with a name like 
+# C:\tmp\launch_cluster_logging\id_file.20180329_00.17.50.273764.txt
+id_file_prefix=log/id_file
+id_file_suffix=txt
+
+# If your instances need to be created inside a given subnet that information goes here:
+subnet_id=subnet-XXXXXXXX
+
+# If your instances need to be instide a certain security group to access the
+# database, those go here, comma separated:
+security_groups=sg-XXXXXXXX,sg-XXXXXXXX
