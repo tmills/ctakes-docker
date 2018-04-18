@@ -33,7 +33,7 @@ public class CreateDbReaderDescriptor {
                 I2b2CollectionReader.PARAM_DB_CONN_RESRC,
                 "DbConnectionRead");
 
-        CollectionReaderDescription aed = CollectionReaderFactory.createReaderDescription(I2b2CollectionReader.class,
+        CollectionReaderDescription aed = CollectionReaderFactory.createReaderDescription(MemReleaseI2b2CollectionReader.class,
                 I2b2CollectionReader.PARAM_SQL,
                 System.getProperty("oracle_table"),
                 I2b2CollectionReader.PARAM_DOCTEXT_COL,
