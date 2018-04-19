@@ -1,12 +1,15 @@
 import org.apache.ctakes.core.util.DocumentIDAnnotationUtil;
 import org.apache.ctakes.typesystem.type.structured.DocumentID;
 import org.apache.ctakes.typesystem.type.textspan.Segment;
-import org.apache.log4j.Logger;
+import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.jcas.JCas;
+import org.apache.uima.resource.ResourceInitializationException;
+import org.apache.uima.util.Level;
+import org.apache.uima.util.Logger;
 
 import java.io.FileWriter;
 
@@ -19,13 +22,19 @@ import java.io.FileWriter;
  * few features and used some rule-generating machine learning systems to make this as simple as possible.
  */
 public class IgnorableSectionAnnotator extends JCasAnnotator_ImplBase {
-    Logger logger = Logger.getLogger(IgnorableSectionAnnotator.class);
+    Logger logger = null;
+
+    @Override
+    public void initialize(UimaContext context) throws ResourceInitializationException {
+        super.initialize(context);
+        logger = context.getLogger();
+    }
 
     @Override
     public void process(JCas jCas) throws AnalysisEngineProcessException {
         String docId = DocumentIDAnnotationUtil.getDocumentID(jCas);
-        logger.warn("Processing : " + docId);
-        
+        logger.log(Level.WARNING, "Processing: " + docId);
+
         String text = jCas.getDocumentText();
         String[] lines = text.split("\n");
         boolean prevIgnorable = false;
