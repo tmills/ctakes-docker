@@ -5,6 +5,7 @@
 # Script takes one input parameter - the name of a configuration file.
 #
 from __future__ import print_function   # use Python 3 print function, so uses of print will be compatible with Python 3.
+import argparse
 import os
 import sys
 import tempfile      # Manages temporary files 
@@ -29,7 +30,8 @@ UMLS_USER_KEY='ctakes_umlsuser'  # Needed if using cTAKES dictionary from sf.net
 UMLS_PW_KEY='ctakes_umlspw'      # Needed if using cTAKES dictionary from sf.net or create your own using cTAKES GUI
 
 ORCL_URL_KEY='oracle_url'
-ORCL_TABLE_KEY='output_table_name'
+ORCL_OTABLE_KEY='output_table_name'
+ORCL_ITABLE_KEY='input_table_name'
 ORCL_USER_KEY='oracle_user'
 ORCL_PW_KEY='oracle_pw'
 
@@ -57,21 +59,22 @@ def flag_out(msg):
     out('%s %s %s\n' % (flag_str, msg, flag_str))
 
 def main(args):
-
+    parser = argparse.ArgumentParser(description='ctakes-docker cluster-launching script')
+    parser.add_argument('config', type=str,
+                    help='path to config file')
+    parser.add_argument('--skip-read', action='store_true',
+                    help='Spin up the cluster but do not submit reader job')
+    args = parser.parse_args(args)
     print("Script start time is %s" % (start_time.isoformat()))
 
-    if len(args) < 1:
-        sys.stderr.write("Arguments: <config file>\n")
-        sys.stderr.write("Example: python %s my_config_file.txt\n" % (__file__))
-        sys.exit(-1)
-
-    config_map = read_config(args[0])
+    config_map = read_config(args.config)
     if config_map is None:
         sys.stderr.write("Unable to get any configuration options from %s\n", args[0])
         sys.exit(-1)
 
     user_best_guess = config_map.get('user', getpass.getuser())
     BROKER_INSTANCE_NAME="%s-NLP-Broker-Autostart" % user_best_guess
+    READER_INSTANCE_NAME="%s-NLP-Reader-Autostart" % user_best_guess
     MIST_INSTANCE_NAME="%s-NLP-Mist-Autostart" % user_best_guess
     CTAKES_INSTANCE_NAME="%s-NLP-Pipeline-Autostart" % user_best_guess
     WRITER_INSTANCE_NAME="%s-NLP-Writer-Autostart" % user_best_guess
@@ -92,6 +95,13 @@ def main(args):
 
     # For now the minimum expected replications for everything below is 1 because right now 
     # we expect to always use MIST and always output to the database table with the writer 
+    READER_AMI = get_required(config_map, 'READER_AMI')
+    READER_MACHINE = get_required(config_map, 'READER_MACHINE')
+    READER_REPLICATION = get_replication_value(config_map, 'READER_REPLICATION', 1, MAX_EXPECTED_REPLICATIONS)
+    if (READER_REPLICATION is None) or (READER_REPLICATION < 0):
+        sys.stderr.write("Exiting due to error getting %s.\n" % 'WRITER_REPLICATION')
+        sys.exit(-1)
+
     MIST_AMI = get_required(config_map, 'MIST_AMI')
     MIST_MACHINE = get_required(config_map, 'MIST_MACHINE')
     MIST_REPLICATION = get_replication_value(config_map, 'MIST_REPLICATION', 1, MAX_EXPECTED_REPLICATIONS)
@@ -102,14 +112,14 @@ def main(args):
     PIPELINE_AMI = get_required(config_map, 'PIPELINE_AMI')
     PIPELINE_MACHINE = get_required(config_map, 'PIPELINE_MACHINE')
     PIPELINE_REPLICATION = get_replication_value(config_map, 'PIPELINE_REPLICATION', 1, MAX_EXPECTED_REPLICATIONS)
-    if (PIPELINE_REPLICATION is None) or (PIPELINE_REPLICATION < 0):          
+    if (PIPELINE_REPLICATION is None) or (PIPELINE_REPLICATION < 0):
         sys.stderr.write("Exiting due to error getting %s.\n" % 'PIPELINE_REPLICATION')
         sys.exit(-1)
 
     WRITER_AMI = get_required(config_map, 'WRITER_AMI')
     WRITER_MACHINE = get_required(config_map, 'WRITER_MACHINE')
     WRITER_REPLICATION = get_replication_value(config_map, 'WRITER_REPLICATION', 1, MAX_EXPECTED_REPLICATIONS)
-    if (WRITER_REPLICATION is None) or (WRITER_REPLICATION < 0):          
+    if (WRITER_REPLICATION is None) or (WRITER_REPLICATION < 0):
         sys.stderr.write("Exiting due to error getting %s.\n" % 'WRITER_REPLICATION')
         sys.exit(-1)
 
@@ -188,7 +198,8 @@ def main(args):
 
     ## Write the information about the broker that the other containers will need to a temp env_file
     env_file = write_env_file({ ORCL_URL_KEY:config_map[ORCL_URL_KEY],
-                                ORCL_TABLE_KEY:config_map[ORCL_TABLE_KEY],
+                                ORCL_OTABLE_KEY:config_map[ORCL_OTABLE_KEY],
+                                ORCL_ITABLE_KEY:config_map[ORCL_ITABLE_KEY],
                                 ORCL_USER_KEY:config_map[ORCL_USER_KEY],
                                 ORCL_PW_KEY:config_map[ORCL_PW_KEY],
                                 BROKER_HOST_KEY:broker_private_ip,
@@ -209,6 +220,9 @@ def main(args):
         try: 
             ## start the mist instance(s):
             mist_instances = start_instances(MIST_AMI, MIST_REPLICATION, MIST_MACHINE, config_map, broker_ip, fout, MIST_INSTANCE_NAME, project)
+
+            ## start the collection reader instance(s) (though we'll run them last)
+            reader_instances = start_instances(READER_AMI, READER_REPLICATION, READER_MACHINE, config_map, broker_ip, fout, READER_INSTANCE_NAME, project)
 
             ## start the ctakes instance(s):
             pipeline_instances = start_instances(PIPELINE_AMI, PIPELINE_REPLICATION, PIPELINE_MACHINE, config_map, broker_ip, fout, CTAKES_INSTANCE_NAME, project)
@@ -240,23 +254,26 @@ def main(args):
         sys.exit(-1)
 
     ### Have the broker start processing data
-    try:
-        ## run the command on the broker that processes the input from a data base table
-        flag_out('Starting collection reader on broker instance')
-        cmd = "ctakes-docker/process.db.sh %s" % input_table_name  
-        run_command_on_instances(broker_instances, cmd, env_file, key_file, 60)
-        print()
-    except (KeyboardInterrupt):
-        close_ignore_exception(env_file)
-        sys.stderr.write("Program was interrupted while running command on broker.\n");
-        sys.stderr.write("Exiting.")
-        sys.exit(-1)
-    except Exception as e:
-        close_ignore_exception(env_file)
-        sys.stderr.write("Exception while running command on broker.\n");
-        sys.stderr.write("Exception: %s\n" % e)
-        sys.stderr.write("Exiting.\n")
-        sys.exit(-1)
+    if not args.skip_read:
+        try:
+            ## run the command on the broker that processes the input from a data base table
+            flag_out('Starting collection reader container(s)')
+            #cmd = "ctakes-docker/process.db.sh %s" % input_table_name  
+            #run_command_on_instances(broker_instances, cmd, env_file, key_file, 60)
+            #print()
+            cmd = 'cd ctakes-docker/; ./bin/runReaderContainer.sh'
+            run_command_on_instances(reader_instances, cmd, env_file, key_file, 120)
+        except (KeyboardInterrupt):
+            close_ignore_exception(env_file)
+            sys.stderr.write("Program was interrupted while running command on broker.\n");
+            sys.stderr.write("Exiting.")
+            sys.exit(-1)
+        except Exception as e:
+            close_ignore_exception(env_file)
+            sys.stderr.write("Exception while running command on broker.\n");
+            sys.stderr.write("Exception: %s\n" % e)
+            sys.stderr.write("Exiting.\n")
+            sys.exit(-1)
 
     close_ignore_exception(env_file)
 
@@ -354,7 +371,7 @@ def get_private_ip(instance_id):
 def start_containers(broker_instances, mist_instances, pipeline_instances, writer_instances, env_file, key_file):
         ## Start the broker container, which includes copying the file with environment variables to the broker instance
         flag_out('Running broker container(s)')
-        cmd = "ctakes-docker/bin/runBrokerContainer.sh"
+        cmd = "cd ctakes-docker; ./bin/runBrokerContainer.sh"
         run_command_on_instances(broker_instances, cmd, env_file, key_file, 0)
 
         if broker_only==True:
