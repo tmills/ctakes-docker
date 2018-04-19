@@ -1,5 +1,4 @@
 import org.apache.ctakes.core.util.DocumentIDAnnotationUtil;
-import org.apache.ctakes.typesystem.type.structured.DocumentID;
 import org.apache.ctakes.typesystem.type.textspan.Segment;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
@@ -80,12 +79,14 @@ public class IgnorableSectionAnnotator extends JCasAnnotator_ImplBase {
             }
             prevIgnorable = ignorable;
         }
-        while(Character.isWhitespace(text.charAt(currentSegmentStart))){
-            currentSegmentStart++;
-        }
-        if(currentSegmentEnd > currentSegmentStart) {
-            Segment endSeg = new Segment(jCas, currentSegmentStart, currentSegmentEnd);
-            endSeg.addToIndexes();
+        if(!prevIgnorable) {
+            while (Character.isWhitespace(text.charAt(currentSegmentStart))) {
+                currentSegmentStart++;
+            }
+            if (currentSegmentEnd > currentSegmentStart) {
+                Segment endSeg = new Segment(jCas, currentSegmentStart, currentSegmentEnd);
+                endSeg.addToIndexes();
+            }
         }
     }
 
