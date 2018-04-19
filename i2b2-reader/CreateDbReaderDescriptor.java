@@ -1,3 +1,4 @@
+import org.apache.ctakes.core.resource.JdbcConnectionResource;
 import org.apache.ctakes.core.resource.JdbcConnectionResourceImpl;
 import org.apache.ctakes.i2b2.cr.I2b2CollectionReader;
 import org.apache.uima.collection.CollectionReaderDescription;
@@ -5,6 +6,7 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.factory.ExternalResourceFactory;
 import org.apache.uima.resource.ExternalResourceDescription;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.apache.uima.util.InvalidXMLException;
 import org.xml.sax.SAXException;
 
 import java.io.FileWriter;
@@ -15,8 +17,11 @@ import java.util.Map;
  * Created by tmill on 3/29/18.
  */
 public class CreateDbReaderDescriptor {
-    public static void main(String[] args) throws ResourceInitializationException, IOException, SAXException {
+    public static void main(String[] args) throws ResourceInitializationException, IOException, SAXException, InvalidXMLException {
+        String sqlStatement = String.format("select encounter_num,patient_num,observation_blob,start_date,provider_id,modifier_cd,concept_cd,instance_num from %s where sourcesystem_cd='NOTES' and observation_blob is not null", System.getProperty("oracle_table"));
+
         Map<String,String> env = System.getenv();
+
         ExternalResourceDescription erd = ExternalResourceFactory.createExternalResourceDescription(
                 JdbcConnectionResourceImpl.class,
                 "null",   // method is ambiguous because all strings are objects so this is here as the unneede (i think) aURL argument
@@ -35,7 +40,7 @@ public class CreateDbReaderDescriptor {
 
         CollectionReaderDescription aed = CollectionReaderFactory.createReaderDescription(MemReleaseI2b2CollectionReader.class,
                 I2b2CollectionReader.PARAM_SQL,
-                System.getProperty("oracle_table"),
+                sqlStatement,
                 I2b2CollectionReader.PARAM_DOCTEXT_COL,
                 "OBSERVATION_BLOB",
                 I2b2CollectionReader.PARAM_DOCID_COLS,
@@ -57,9 +62,11 @@ public class CreateDbReaderDescriptor {
                 I2b2CollectionReader.PARAM_INSTANCE_NUM_COL,
                 "instance_num",
                 I2b2CollectionReader.PARAM_DB_CONN_RESRC,
-                erd
+                "DbConnectionRead"
                 );
 
+        ExternalResourceFactory.createDependency(aed, "DbConnectionRead", JdbcConnectionResource.class);
+        ExternalResourceFactory.bindExternalResource(aed, "DbConnectionRead", erd);
         aed.toXML(new FileWriter(args[0]));
     }
 }

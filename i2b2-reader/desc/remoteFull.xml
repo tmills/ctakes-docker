@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<analysisEngineDescription xmlns="http://uima.apache.org/resourceSpecifier">
+    <frameworkImplementation>org.apache.uima.java</frameworkImplementation>
+    <primitive>false</primitive>
+    <delegateAnalysisEngineSpecifiers>
+        <delegateAnalysisEngine key="remoteMist">
+            <import location="docker-mist.xml"/>
+        </delegateAnalysisEngine>
+        <delegateAnalysisEngine key="dockerFastDictionary">
+            <import location="docker-fast-dictionary.xml"/>
+        </delegateAnalysisEngine>
+        <delegateAnalysisEngine key="remoteI2b2Writer">
+            <import location="docker-writer.xml"/>
+        </delegateAnalysisEngine>
+    </delegateAnalysisEngineSpecifiers>
+    <analysisEngineMetaData>
+        <name>Aggregate with de-identification</name>
+        <configurationParameters/>
+        <configurationParameterSettings/>
+        <flowConstraints>
+            <fixedFlow>
+                <node>remoteMist</node>
+                <node>dockerFastDictionary</node>
+                <node>remoteI2b2Writer</node>
+            </fixedFlow>
+        </flowConstraints>
+        <capabilities/>
+        <operationalProperties>
+            <modifiesCas>true</modifiesCas>
+            <multipleDeploymentAllowed>true</multipleDeploymentAllowed>
+            <outputsNewCASes>false</outputsNewCASes>
+        </operationalProperties>
+    </analysisEngineMetaData>
+
+</analysisEngineDescription>
