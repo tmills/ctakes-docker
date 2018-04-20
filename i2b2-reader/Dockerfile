@@ -19,6 +19,7 @@ COPY desc/docker-writer.xml /desc/
 
 ENV UIMA_HOME=/apache-uima-as-2.9.0
 ENV CTAKES_HOME=/apache-ctakes-4.0.0
+ENV UIMA_LOGGER_CONFIG_FILE=/Logging.properties
 
 COPY ojdbc8.jar /
 COPY ctakes-i2b2.jar /
@@ -37,6 +38,7 @@ COPY MemReleaseI2b2CollectionReader.java /
 
 COPY runRemoteAsyncAE.sh /
 COPY wrapper.sh /
+COPY Logging.properties /
 
 RUN javac -cp ctakes-i2b2.jar:/apache-ctakes-4.0.0/lib/uimaj-core-2.9.0.jar:/apache-ctakes-4.0.0/lib/uimafit-core-2.2.0.jar:/apache-ctakes-4.0.0/lib/ctakes-type-system-4.0.0.jar:/apache-ctakes-4.0.0/lib/ctakes-core-4.0.0.jar:/apache-ctakes-4.0.0/lib/log4j-1.2.17.jar  CreateDbReaderDescriptor.java MemReleaseI2b2CollectionReader.java
 RUN jar cf i2b2.jar *.class

@@ -6,7 +6,7 @@ if [ ! -f env_file.txt ]; then
     exit 1
 fi
 
-docker run --name i2b2-reader --env-file env_file.txt  -d i2b2-reader
+docker run --name i2b2-reader --env-file env_file.txt -v ~/ctakes-docker/log:/log -d i2b2-reader
 
 
 
