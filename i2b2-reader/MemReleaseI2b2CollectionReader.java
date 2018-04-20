@@ -7,7 +7,6 @@ import org.apache.ctakes.core.resource.JdbcConnectionResource;
 import org.apache.ctakes.typesystem.type.structured.DocumentID;
 import org.apache.ctakes.typesystem.type.structured.Metadata;
 import org.apache.ctakes.typesystem.type.structured.SourceData;
-import org.apache.log4j.Logger;
 import org.apache.uima.cas.CAS;
 import org.apache.uima.cas.CASException;
 import org.apache.uima.cas.CASRuntimeException;
@@ -23,6 +22,8 @@ import org.apache.uima.util.ProgressImpl;
 import java.io.*;
 import java.sql.*;
 
+import static org.apache.uima.util.Level.*;
+
 /**
 * Author: SPF
 * Affiliation: CHIP-NLP
@@ -31,7 +32,7 @@ import java.sql.*;
 final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
 
    // LOG4J logger based on class name
-   private Logger logger = Logger.getLogger( getClass().getName() );
+   private org.apache.uima.util.Logger logger = null;
 
    /**
     * SQL statement to retrieve the document.
@@ -99,7 +100,8 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
    private String _db_col_instance_num;
 
    public void initialize() throws ResourceInitializationException {
-         logger.error( "Initializing MemReleaseI2b2CollectionReader" );
+      logger = getUimaContext().getLogger();
+      logger.log(SEVERE, "Initializing MemReleaseI2b2CollectionReader");
       String sqlStatement;
       String resourceName;
       try {
@@ -119,7 +121,7 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
          resourceName = (String) getConfigParameterValue( PARAM_DB_CONN_RESRC );
       } catch ( ClassCastException ccE ) {
          // thrown because non-specific method getConfigParameterValue(..) returns an Object and we are casting
-         logger.error( "Could not fetch a configuration parameter value of the proper type" );
+         logger.log(SEVERE, "Could not fetch a configuration parameter value of the proper type" );
          throw new ResourceInitializationException( ccE );
       }
       loadResources( resourceName, sqlStatement );
@@ -137,11 +139,11 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
       } catch ( ResourceAccessException | ClassCastException raEccE ) {
          // thrown by UimaContext.getResourceObject(..)
           // thrown because non-specific method UimaContext.getResourceObject(..) returns an Object and we are casting
-         logger.error( "Could not obtain a uima resource" );
+         logger.log(SEVERE, "Could not obtain a uima resource" );
          throw new ResourceInitializationException( raEccE );
       } catch ( SQLException sqlE ) {
          // thrown by Connection.prepareStatement(..) and getTotalRowCount(..)
-          logger.error( "Could not interact with Database");
+          logger.log(SEVERE, "Could not interact with Database");
          throw new ResourceInitializationException( sqlE );
       }
    }
@@ -168,7 +170,7 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
       if ( !countStatement.isClosed() ) {
          countStatement.close();
       }
-      logger.info( "Processing row count:" + totalRowCount );
+      logger.log(INFO, "Processing row count:" + totalRowCount );
       return totalRowCount;
    }
 
@@ -196,7 +198,7 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
     */
    @Override
    public void getNext( final CAS cas ) throws IOException, CollectionException {
-     logger.error( "getNext(" );
+     logger.log(SEVERE, "getNext(" );
       _currRowCount++;
       if ( cas == null ) {
          throw new CollectionException( new NullPointerException( "Null CAS " + _currRowCount
@@ -237,7 +239,7 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
       final String documentID = createDocumentID();
       docIdAnnot.setDocumentID( documentID );
       docIdAnnot.addToIndexes();
-      logger.error( "Reading document number " + _currRowCount + " with ID " + docIdAnnot.getDocumentID() );
+      logger.log(SEVERE, "Reading document number " + _currRowCount + " with ID " + docIdAnnot.getDocumentID() );
       try {
          setMetadata( jCas );
       } catch ( SQLException sqlE ) {
@@ -256,7 +258,7 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
             document = convertToString( _resultSet.getClob( _docTextColName ) );
          } else {
             if ( !_docColTypeName.equals( "text" ) ) {
-               logger.warn( "Inferring document text column as string type: " + _docColTypeName );
+               logger.log(WARNING, "Inferring document text column as string type: " + _docColTypeName );
             }
             document = _resultSet.getString( _docTextColName );
          }
@@ -354,7 +356,7 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
    }
 
    private void fillResultSet() throws SQLException {
-      logger.info( "SQL:" + _queryPrepStatement.toString() );
+      logger.log(INFO, "SQL:" + _queryPrepStatement.toString() );
       _resultSet = _queryPrepStatement.executeQuery();
    }
 
@@ -419,7 +421,7 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
       final long hours = (totalSeconds - days*daySeconds) / hourSeconds;
       final long minutes = (totalSeconds - days*daySeconds - hours*hourSeconds) / 60;
       final long seconds = totalSeconds % 60;
-      logger.info( getClass().getName() + " read " + _totalRowCount + " documents in "
+      logger.log(INFO, getClass().getName() + " read " + _totalRowCount + " documents in "
                          + days + " days, " + hours + " hours, " + minutes + " minutes and " + seconds + " seconds" );
       try {
          if ( !_resultSet.isClosed() ) {
@@ -456,7 +458,7 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
       sourcedata.setSourceOriginalDate( ts.toString() );
       metadata.setSourceData( sourcedata );
       jCas.addFsToIndexes( metadata );
-      logger.error(metadata.getPatientID() + " " + sourcedata.getSourceEncounterId() + " " + sourcedata.getSourceInstanceId());
+      logger.log(SEVERE, metadata.getPatientID() + " " + sourcedata.getSourceEncounterId() + " " + sourcedata.getSourceInstanceId());
       return jCas;
    }
 
