@@ -80,7 +80,8 @@ public class IgnorableSectionAnnotator extends JCasAnnotator_ImplBase {
             prevIgnorable = ignorable;
         }
         if(!prevIgnorable) {
-            while (Character.isWhitespace(text.charAt(currentSegmentStart))) {
+            while (currentSegmentEnd > currentSegmentStart &&
+                    Character.isWhitespace(text.charAt(currentSegmentStart))) {
                 currentSegmentStart++;
             }
             if (currentSegmentEnd > currentSegmentStart) {
