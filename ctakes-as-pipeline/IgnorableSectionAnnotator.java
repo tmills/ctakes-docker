@@ -63,11 +63,14 @@ public class IgnorableSectionAnnotator extends JCasAnnotator_ImplBase {
                 if(!prevIgnorable){
                     // just starting ignorable section -- create ignorable segment:
                     // first move forward start pointer if it's pointing at whitespace:
-                    while(Character.isWhitespace(text.charAt(currentSegmentStart))){
+                    while(currentSegmentEnd > currentSegmentStart &&
+                            Character.isWhitespace(text.charAt(currentSegmentStart))){
                         currentSegmentStart++;
                     }
-                    Segment seg = new Segment(jCas, currentSegmentStart, currentSegmentEnd);
-                    seg.addToIndexes();
+                    if(currentSegmentEnd > currentSegmentStart) {
+                        Segment seg = new Segment(jCas, currentSegmentStart, currentSegmentEnd);
+                        seg.addToIndexes();
+                    }
                 }
                 // in the middle of an ignorable section. update segmentStart
                 currentSegmentStart = currentSegmentEnd + line.length() + 1;
