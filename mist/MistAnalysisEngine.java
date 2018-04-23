@@ -1,17 +1,14 @@
+import org.apache.ctakes.typesystem.type.structured.DocumentID;
 import org.apache.uima.UimaContext;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.util.CasUtil;
+import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.resource.ResourceInitializationException;
-import org.mitre.itc.jcarafe.crf.Decoder;
 import org.mitre.itc.jcarafe.crf.TextDecoder;
-import org.mitre.itc.jcarafe.tokenizer.Element;
-import org.mitre.itc.jcarafe.tokenizer.FastTokenizer;
-import org.mitre.itc.jcarafe.util.Annotation;
 import org.mitre.itc.jcarafe.util.Options;
-import scala.collection.immutable.List;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +25,7 @@ public class MistAnalysisEngine extends JCasAnnotator_ImplBase{
   )
   private String modelPath = "/MIST_1_3_1/src/tasks/SHARP/model/model";
 
-  private Pattern xmlPatt = Pattern.compile("<(.*)>(.*?)<\\/\\1>", Pattern.DOTALL);
+  private static Pattern xmlPatt = Pattern.compile("<(.*)>(.*?)<\\/\\1>", Pattern.DOTALL);
 
   @Override
   public void initialize(UimaContext context) throws ResourceInitializationException {
@@ -43,7 +40,9 @@ public class MistAnalysisEngine extends JCasAnnotator_ImplBase{
     try{
       JCas deidView = CasUtil.getView(jCas.getCas(), DEID_VIEW_NAME, true).getJCas();
 
-      String text = jCas.getDocumentText().replace("<","&lt;").replace(">","&gt;"); //String text = jCas.getDocumentText().replaceAll("<","&lt;").replaceAll(">","&gt;");
+      copyDocIdToView(jCas, deidView);
+
+      String text = jCas.getDocumentText().replace("<","&lt;").replace(">","&gt;");
 
       String decoderOut = decoder.decodeString(text);
 
@@ -65,9 +64,11 @@ public class MistAnalysisEngine extends JCasAnnotator_ImplBase{
     }
   }
 
-  public static String[] getCommand(String outFilename){
-      return new String[]{"/MIST_1_3_1/src/MAT/bin/MATEngine", "--task", "SHARP Deidentification", "--workflow", "Demo", "--steps", "zone,tag,nominate,transform", "--input_file", "-", "--input_file_type", "raw", "--output_file", outFilename, "--output_file_type", "raw", "--tagger_local", "--tagger_model", "/MIST_1_3_1/src/tasks/SHARP/model/model", "--subprocess_debug", "0",
-      "--replacer", "clear -> [ ]"};
+  private void copyDocIdToView(JCas jCas, JCas deidView) {
+    DocumentID docId = JCasUtil.select(jCas, DocumentID.class).iterator().next();
+    DocumentID newId = new DocumentID(deidView);
+    newId.setDocumentID(docId.getDocumentID());
+    newId.addToIndexes();
   }
 
   @Override
