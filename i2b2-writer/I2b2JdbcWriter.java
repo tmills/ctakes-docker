@@ -8,14 +8,14 @@ import org.apache.ctakes.typesystem.type.refsem.Event;
 import org.apache.ctakes.typesystem.type.textsem.EventMention;
 import org.apache.ctakes.typesystem.type.textsem.IdentifiedAnnotation;
 import org.apache.ctakes.typesystem.type.textspan.Sentence;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.apache.uima.UimaContext;
 import org.apache.uima.cas.CASException;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.apache.uima.util.Logger;
+import org.apache.uima.util.Level;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ import java.util.*;
 )
 public class I2b2JdbcWriter extends AbstractJdbcWriter {
 
-   static private final Logger LOGGER = Logger.getLogger( "I2b2JdbcWriter" );
+   private static Logger logger = null;
 
    // Parameter names for the desc file
    static public final String PARAM_VECTOR_TABLE = "VectorTable";
@@ -111,8 +111,10 @@ public class I2b2JdbcWriter extends AbstractJdbcWriter {
    @Override
    public void initialize(UimaContext context) throws ResourceInitializationException {
       super.initialize(context);
-      //LOGGER.setLevel(Level.INFO);
-      LOGGER.warn("Table name = " + tableName);
+      if(logger == null) {
+          logger = context.getLogger();
+      }
+      logger.log(Level.INFO, "Table name = " + tableName);
    }
 
 
@@ -154,7 +156,7 @@ public class I2b2JdbcWriter extends AbstractJdbcWriter {
     	  throw new RuntimeException(e);
       }
 
-      LOGGER.warn("view = " + deidView.getViewName());
+      logger.log(Level.INFO,"view = " + deidView.getViewName());
       writeConceptRows( deidView, instance, Long.toString(patientNum), Integer.toString(encounterNum), providerId );
 
    }
@@ -178,7 +180,7 @@ private void addNonNull(List<String> list, String s) {
 
 		final Collection<IdentifiedAnnotation> annotations = JCasUtil.select(jcas, IdentifiedAnnotation.class);
 		if (annotations.isEmpty()) {
-			LOGGER.warn("No annotations found. Patient, encounter, provider =  " + patient + ", " + encounter + ", " + provider);
+			logger.log(Level.WARNING, "No annotations found. Patient, encounter, provider =  " + patient + ", " + encounter + ", " + provider);
 			return;
 		}
 		
@@ -202,7 +204,7 @@ private void addNonNull(List<String> list, String s) {
 
 		for (IdentifiedAnnotation annotation : annotations) {
 
-			LOGGER.info("Anno = " + annotation);
+			logger.log(Level.FINE, "Anno = " + annotation);
 			fieldInfoValues.put(I2b2FieldInfo.I2B2_OBERVATION_BLOB, annotation.getCoveredText());
 			
 			ArrayList<String> modifierCds = new ArrayList<String>();
@@ -259,10 +261,10 @@ private void addNonNull(List<String> list, String s) {
 						fieldInfoValues.put(I2b2FieldInfo.VALTYPE_CD, "T");
 						fieldInfoValues.put(I2b2FieldInfo.TVAL_CHAR, tvalChars.get(i)); // Attribute value such as offset, or text of sentence
 					}
-			                LOGGER.info( "before: batchCount = " + batchCount);
-			                LOGGER.info("preparedStatement = " + preparedStatement);
+			        logger.log(Level.FINE, "before: batchCount = " + batchCount);
+                    logger.log(Level.FINE,"preparedStatement = " + preparedStatement);
 					batchCount = writeTableRow( preparedStatement, batchCount, fieldInfoValues );
-			                LOGGER.info(" after: batchCount = " + batchCount);
+                    logger.log(Level.FINE," after: batchCount = " + batchCount);
 				}
 			}
 		}
@@ -286,7 +288,7 @@ private void addNonNull(List<String> list, String s) {
               int MAX_TVAL_LEN = 4000; 
               int window = MAX_TVAL_LEN / 2; // count of characters not bytes
               if (annotation.getCoveredText().length() > window) {
-                  LOGGER.error("Annotation is longer than MAX_TVAL_LEN / 2. MAX_TVAL_LEN = " + MAX_TVAL_LEN + "\n'" + annotation.getCoveredText() + "'");
+                  logger.log(Level.WARNING,"Annotation is longer than MAX_TVAL_LEN / 2. MAX_TVAL_LEN = " + MAX_TVAL_LEN + "\n'" + annotation.getCoveredText() + "'");
                   return annotation.getCoveredText().substring(0, window);
               }
 
@@ -298,7 +300,7 @@ private void addNonNull(List<String> list, String s) {
               if (s.length() <=  window) { 
                   return s;
               }
-              LOGGER.error("SentenceCoverage is longer than MAX_TVAL_LEN / 2. MAX_TVAL_LEN = " + MAX_TVAL_LEN + "\n'" + s + "'");
+              logger.log(Level.WARNING,"SentenceCoverage is longer than MAX_TVAL_LEN / 2. MAX_TVAL_LEN = " + MAX_TVAL_LEN + "\n'" + s + "'");
 
               // get a window around the entity that is at most 'window' long
               // For this unusual case, only look at the first sentence covering the annotation
@@ -319,7 +321,7 @@ private void addNonNull(List<String> list, String s) {
               // if no sentence found covering the annotation, return just the annotation's covered text.
               // This should never happen so don't bother with doing anything fancy like returning a larger string that 
               // includes annotation in the middle.
-              LOGGER.error("No sentence found covering annotation\n" + annotation + "\n");
+              logger.log(Level.SEVERE, "No sentence found covering annotation\n" + annotation + "\n");
               return annotation.getCoveredText(); // verified earlier in this method that this is not longer than window
 
 	}
