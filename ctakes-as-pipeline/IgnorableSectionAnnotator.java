@@ -68,6 +68,7 @@ public class IgnorableSectionAnnotator extends JCasAnnotator_ImplBase {
                         currentSegmentStart++;
                     }
                     if(currentSegmentEnd > currentSegmentStart) {
+                        logger.log(Level.FINE, String.format("Creating segment from %d to %d", currentSegmentStart, currentSegmentEnd));
                         Segment seg = new Segment(jCas, currentSegmentStart, currentSegmentEnd);
                         seg.addToIndexes();
                     }
@@ -88,6 +89,7 @@ public class IgnorableSectionAnnotator extends JCasAnnotator_ImplBase {
                 currentSegmentStart++;
             }
             if (currentSegmentEnd > currentSegmentStart) {
+                logger.log(Level.FINE, String.format("Creating segment from %d to %d", currentSegmentStart, currentSegmentEnd));
                 Segment endSeg = new Segment(jCas, currentSegmentStart, currentSegmentEnd);
                 endSeg.addToIndexes();
             }

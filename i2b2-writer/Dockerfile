@@ -8,6 +8,7 @@ RUN wget -q -O - http://archive.apache.org/dist/uima//uima-as-2.9.0/uima-as-2.9.
 RUN mkdir /desc
 RUN mkdir /outputs
 
+COPY Logging.properties /
 COPY deployAsyncService.sh /
 COPY desc/deploymentDescriptor.xml /desc/
 #COPY desc/deploymentDescriptorDbWriter.xml /desc/
@@ -15,6 +16,7 @@ COPY desc/deploymentDescriptor.xml /desc/
 
 ENV UIMA_HOME=/apache-uima-as-2.9.0
 ENV CTAKES_HOME=/apache-ctakes-4.0.0
+ENV UIMA_LOGGER_CONFIG_FILE=/Logging.properties
 
 COPY ojdbc8.jar /
 COPY uimafit-core-2.2.0.jar /

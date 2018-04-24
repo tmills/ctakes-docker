@@ -5,10 +5,13 @@ RUN apk update && apk add ca-certificates openssl wget unzip python git perl
 ENV MIST_VER 1_3_1
 ENV MIST_HOME /MIST_1_3_1
 ENV UIMA_HOME=/apache-uima-as-2.9.0
+ENV UIMA_LOGGER_CONFIG_FILE=/Logging.properties
 
 RUN wget -O MIST_1.3.1.zip "https://sourceforge.net/projects/mist-deid/files/MIST 1.3.1/MIST_1_3_1.zip/download"
 RUN unzip MIST_1.3.1.zip
 RUN wget -q -O - http://archive.apache.org/dist/uima/uima-as-2.9.0/uima-as-2.9.0-bin.tar.gz | tar xzf -
+RUN wget -q -O ctakes-type-system-4.0.0.jar http://search.maven.org/remotecontent?filepath=org/apache/ctakes/ctakes-type-system/4.0.0/ctakes-type-system-4.0.0.jar
+RUN wget -q -O ctakes-core-4.0.0.jar http://search.maven.org/remotecontent?filepath=org/apache/ctakes/ctakes-core/4.0.0/ctakes-core-4.0.0.jar
 
 ## Run mist install and then install the SHARP-trained deidentification model:
 WORKDIR $MIST_HOME
@@ -23,6 +26,7 @@ RUN src/MAT/bin/MATManagePluginDirs install src/tasks/SHARP
 ## Copy over the UIMA annotator and descriptor files
 WORKDIR /
 
+COPY Logging.properties /
 COPY mistDescriptor.xml /
 COPY mistDeploymentDescriptor.xml /
 COPY deployAsyncService.sh /
@@ -31,8 +35,12 @@ COPY uimaj-core-2.9.0.jar /
 COPY commons-lang-2.6.jar /
 COPY jcarafe_xmlrpc-0.9.2-bin.jar /
 COPY MistAnalysisEngine.java /
+COPY TypeSystem.xml /
+#COPY MistDescriptorGenerator.java /
+#COPY deploy_wrapper.sh /
 
-RUN javac -cp uimafit-core-2.2.0.jar:uimaj-core-2.9.0.jar:jcarafe_xmlrpc-0.9.2-bin.jar:. MistAnalysisEngine.java
-RUN jar cf mist.jar MistAnalysisEngine.class
+RUN mkdir log
+RUN javac -cp ctakes-core-4.0.0.jar:ctakes-type-system-4.0.0.jar:uimafit-core-2.2.0.jar:uimaj-core-2.9.0.jar:jcarafe_xmlrpc-0.9.2-bin.jar:. MistAnalysisEngine.java
+RUN jar cf mist.jar *.class
 
 CMD ./deployAsyncService.sh mistDeploymentDescriptor.xml -brokerURL "tcp://$broker_host:$broker_port"

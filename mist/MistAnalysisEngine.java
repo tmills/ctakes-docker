@@ -1,9 +1,9 @@
+import org.apache.ctakes.core.util.DocumentIDAnnotationUtil;
 import org.apache.ctakes.typesystem.type.structured.DocumentID;
 import org.apache.uima.UimaContext;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.util.CasUtil;
-import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.resource.ResourceInitializationException;
@@ -65,9 +65,8 @@ public class MistAnalysisEngine extends JCasAnnotator_ImplBase{
   }
 
   private void copyDocIdToView(JCas jCas, JCas deidView) {
-    DocumentID docId = JCasUtil.select(jCas, DocumentID.class).iterator().next();
     DocumentID newId = new DocumentID(deidView);
-    newId.setDocumentID(docId.getDocumentID());
+    newId.setDocumentID(DocumentIDAnnotationUtil.getDocumentID(jCas));
     newId.addToIndexes();
   }
 

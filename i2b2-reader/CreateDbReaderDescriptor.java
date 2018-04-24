@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class CreateDbReaderDescriptor {
     public static void main(String[] args) throws ResourceInitializationException, IOException, SAXException, InvalidXMLException {
-        String sqlStatement = String.format("select encounter_num,patient_num,observation_blob,start_date,provider_id,modifier_cd,concept_cd,instance_num from %s where sourcesystem_cd='NOTES' and observation_blob is not null", System.getProperty("oracle_table"));
+        String sqlStatement = String.format("select encounter_num,patient_num,observation_blob,start_date,provider_id,modifier_cd,concept_cd,instance_num from %s where sourcesystem_cd='NOTES' and observation_blob is not null and length(observation_blob) > 0", System.getProperty("oracle_table"));
 
         Map<String,String> env = System.getenv();
 

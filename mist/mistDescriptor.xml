@@ -33,6 +33,9 @@ and creates a new view with the de-identified version of the text.</description>
 </configurationParameters>
 <configurationParameterSettings/>
     <typeSystemDescription>
+       <imports>
+         <import location="TypeSystem.xml" />
+       </imports>
     </typeSystemDescription>
 <typePriorities/>
 <fsIndexCollection/>
