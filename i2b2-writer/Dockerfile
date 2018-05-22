@@ -40,5 +40,4 @@ RUN javac -cp uimafit-core-2.2.0.jar:uimaj-core-2.9.0.jar:ctakes-type-system-4.0
 RUN javac -cp uimaj-core-2.9.0.jar:uimafit-core-2.2.0.jar:ctakes-type-system-4.0.0.jar:ctakes-core-4.0.0.jar:log4j-1.2.17.jar AbstractJdbcWriter.java I2b2JdbcWriter.java CreateDbWriterDescriptor.java
 RUN jar cf i2b2.jar *.class
 
-CMD ./wrapper.sh $output_table_name $oracle_url $oracle_user $oracle_pw $broker_host $broker_port
-
+CMD ./wrapper.sh $output_table_name $oracle_host $oracle_user $oracle_pw $broker_host $broker_port

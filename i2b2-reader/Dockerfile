@@ -43,4 +43,4 @@ COPY Logging.properties /
 RUN javac -cp ctakes-i2b2.jar:/apache-ctakes-4.0.0/lib/uimaj-core-2.9.0.jar:/apache-ctakes-4.0.0/lib/uimafit-core-2.2.0.jar:/apache-ctakes-4.0.0/lib/ctakes-type-system-4.0.0.jar:/apache-ctakes-4.0.0/lib/ctakes-core-4.0.0.jar:/apache-ctakes-4.0.0/lib/log4j-1.2.17.jar  CreateDbReaderDescriptor.java MemReleaseI2b2CollectionReader.java
 RUN jar cf i2b2.jar *.class
 
-CMD ./wrapper.sh $input_table_name $oracle_url $oracle_user $oracle_pw $broker_host $broker_port
+CMD ./wrapper.sh $input_table_name $oracle_host $oracle_user $oracle_pw $broker_host $broker_port
