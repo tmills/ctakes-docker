@@ -88,6 +88,10 @@ public class IgnorableSectionAnnotator extends JCasAnnotator_ImplBase {
                     Character.isWhitespace(text.charAt(currentSegmentStart))) {
                 currentSegmentStart++;
             }
+            while (currentSegmentEnd > currentSegmentStart &&
+                    Character.isWhitespace(text.charAt(currentSegmentEnd-1))) {
+                currentSegmentEnd--;
+            }
             if (currentSegmentEnd > currentSegmentStart) {
                 logger.log(Level.FINE, String.format("Creating segment from %d to %d", currentSegmentStart, currentSegmentEnd));
                 Segment endSeg = new Segment(jCas, currentSegmentStart, currentSegmentEnd);
