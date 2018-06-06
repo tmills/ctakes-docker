@@ -88,6 +88,10 @@ public class IgnorableSectionAnnotator extends JCasAnnotator_ImplBase {
                     Character.isWhitespace(text.charAt(currentSegmentStart))) {
                 currentSegmentStart++;
             }
+            // this can happen if the document ends without a newline
+            if(currentSegmentEnd > text.length()){
+                currentSegmentEnd = text.length();
+            }
             while (currentSegmentEnd > currentSegmentStart &&
                     Character.isWhitespace(text.charAt(currentSegmentEnd-1))) {
                 currentSegmentEnd--;
