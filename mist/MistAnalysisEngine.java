@@ -7,6 +7,8 @@ import org.apache.uima.fit.util.CasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.apache.uima.internal.util.XMLUtils;
+
 import org.mitre.itc.jcarafe.crf.TextDecoder;
 import org.mitre.itc.jcarafe.util.Options;
 
@@ -42,7 +44,7 @@ public class MistAnalysisEngine extends JCasAnnotator_ImplBase{
 
       copyDocIdToView(jCas, deidView);
 
-      String text = jCas.getDocumentText().replace("<","&lt;").replace(">","&gt;");
+      String text = forceXmlSerializable(jCas.getDocumentText().replace("<","&lt;").replace(">","&gt;"));
 
       String decoderOut = decoder.decodeString(text);
 
@@ -74,5 +76,23 @@ public class MistAnalysisEngine extends JCasAnnotator_ImplBase{
   public void collectionProcessComplete() throws AnalysisEngineProcessException {
     super.collectionProcessComplete();
     decoder.cleanUp();
+  }
+
+  /// copied from some cTAKES collection readers.
+  private String forceXmlSerializable( String s ) {
+    if (s==null) return "";
+    if (s.length()==0) return s;
+
+    int badChar = XMLUtils.checkForNonXmlCharacters(s);
+
+    // Performance-wise this is not the best but since this is not that common an occurrence,
+    // it is good enough
+    while (badChar > -1) {
+      char c = s.charAt(badChar);
+      s = s.replace(c, ' ');
+      badChar = XMLUtils.checkForNonXmlCharacters(s);
+    }
+
+    return s;
   }
 }
