@@ -4,3 +4,5 @@ broker_host=localhost
 ## Normal port is 61616 but it can be changed for your firewall setup
 broker_port=61616
 #
+ctakes_umlsuser=REPLACEME
+ctakes_umlspw=REPLACEME
