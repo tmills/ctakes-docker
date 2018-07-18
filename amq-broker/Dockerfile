@@ -7,5 +7,6 @@ EXPOSE 61616
 
 COPY startBroker.sh /
 COPY conf/* /apache-activemq-5.14.5/conf/
+COPY bin/env /apache-activemq-5.14.5/bin/
 
 CMD ./startBroker.sh

@@ -121,13 +121,13 @@
         <systemUsage>
             <systemUsage>
                 <memoryUsage>
-                    <memoryUsage limit="500 mb"/>
+                    <memoryUsage limit="2 gb"/>
                 </memoryUsage>
                 <storeUsage>
-                    <storeUsage limit="1 gb"/>
+                    <storeUsage limit="2 gb"/>
                 </storeUsage>
                 <tempUsage>
-                    <tempUsage limit="500 mb"/>
+                    <tempUsage limit="2 gb"/>
                 </tempUsage>
             </systemUsage>
         </systemUsage>
