@@ -22,7 +22,7 @@ public class CreateDbWriterDescriptor {
                 JdbcConnectionResourceImpl.PARAM_DRIVER_CLASS,
                 "oracle.jdbc.OracleDriver",
                 JdbcConnectionResourceImpl.PARAM_URL,
-                System.getProperty("oracle_url"),
+                "jdbc:oracle:thin:@" + System.getProperty("oracle_host") + ":1521:ORCL",
                 JdbcConnectionResourceImpl.PARAM_USERNAME,
                 System.getProperty("oracle_user"),
                 JdbcConnectionResourceImpl.PARAM_PASSWORD,

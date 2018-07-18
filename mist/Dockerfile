@@ -6,6 +6,7 @@ ENV MIST_VER 1_3_1
 ENV MIST_HOME /MIST_1_3_1
 ENV UIMA_HOME=/apache-uima-as-2.9.0
 ENV UIMA_LOGGER_CONFIG_FILE=/Logging.properties
+ENV UIMA_JVM_OPTS="-Xms2G -Xmx5G"
 
 RUN wget -O MIST_1.3.1.zip "https://sourceforge.net/projects/mist-deid/files/MIST 1.3.1/MIST_1_3_1.zip/download"
 RUN unzip MIST_1.3.1.zip

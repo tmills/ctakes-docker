@@ -17,6 +17,7 @@ COPY desc/deploymentDescriptor.xml /desc/
 ENV UIMA_HOME=/apache-uima-as-2.9.0
 ENV CTAKES_HOME=/apache-ctakes-4.0.0
 ENV UIMA_LOGGER_CONFIG_FILE=/Logging.properties
+ENV UIMA_JVM_OPTS="-Xms2G -Xmx5G"
 
 COPY ojdbc8.jar /
 COPY uimafit-core-2.2.0.jar /
