@@ -58,6 +58,7 @@ import org.apache.uima.util.ProgressImpl;
 
 import java.io.*;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -286,7 +287,7 @@ public class XmlFixingFilesInDirectoryCollectionReader extends CollectionReader_
 			docID = docID.substring(iv_rootPath.length()+1);
 		return docID;
 	}
-	
+
 	/**
 	 * @see org.apache.uima.collection.base_cpm.BaseCollectionReader#close()
 	 */
@@ -338,9 +339,9 @@ public class XmlFixingFilesInDirectoryCollectionReader extends CollectionReader_
 		metadata.setPatientID( 0L );
 		sourcedata.setAuthorSpecialty( "Unknown" );
 		sourcedata.setNoteTypeCode( "UnknownNoteType" );
-		sourcedata.setSourceEncounterId( "UnknownEncounterId" );
-		sourcedata.setSourceInstanceId( "UnknownInstanceId" );
-		sourcedata.setSourceOriginalDate( "UnknownDate" );
+		sourcedata.setSourceEncounterId( -1L+"" );
+		sourcedata.setSourceInstanceId( -1L+"" );
+		sourcedata.setSourceOriginalDate( (new Timestamp(System.currentTimeMillis())).toString() );
 		metadata.setSourceData( sourcedata );
 		jCas.addFsToIndexes( metadata );
 		logger.log(Level.SEVERE, metadata.getPatientID() + " " + sourcedata.getSourceEncounterId() + " " + sourcedata.getSourceInstanceId());
