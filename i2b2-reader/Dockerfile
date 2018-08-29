@@ -24,16 +24,6 @@ ENV UIMA_JVM_OPTS="-Xms2G -Xmx5G"
 
 COPY ojdbc8.jar /
 COPY ctakes-i2b2.jar /
-# COPY uimafit-core-2.2.0.jar /
-# COPY uimaj-core-2.9.0.jar /
-# COPY ctakes-type-system-4.0.0.jar /
-# COPY ctakes-core-4.0.0.jar /
-# COPY log4j-1.2.17.jar /
-# COPY commons-io-2.2.jar /
-# COPY commons-logging-1.1.1.jar /
-# COPY commons-lang-2.6.jar /
-# COPY spring-beans-3.1.2.RELEASE.jar /
-# COPY spring-core-3.1.2.RELEASE.jar /
 COPY CreateDbReaderDescriptor.java /
 COPY MemReleaseI2b2CollectionReader.java /
 
