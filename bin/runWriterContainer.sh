@@ -7,7 +7,7 @@ if [ ! -f env_file.txt ]; then
 fi
 
 mkdir -p outputs
-docker run --name i2b2-writer --env-file env_file.txt -v ~/ctakes-docker/outputs/:/outputs -v ~/ctakes-docker/log:/log -d i2b2-writer
+docker run --name i2b2-writer --env-file env_file.txt -v ~/ctakes-docker/outputs/:/outputs -v ~/ctakes-docker/shared:/shared -d i2b2-writer
 
 
 

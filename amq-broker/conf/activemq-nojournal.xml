@@ -141,7 +141,7 @@
         -->
         <transportConnectors>
             <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
-            <transportConnector name="http" uri="http://0.0.0.0:8080"/>
+            <transportConnector name="https" uri="https://0.0.0.0:8080"/>
         </transportConnectors>
 
     </broker>

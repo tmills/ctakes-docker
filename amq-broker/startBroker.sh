@@ -18,7 +18,7 @@
 #   under the License.
 
 # ActiveMQ needs a HOME
-export ACTIVEMQ_HOME=/apache-activemq-5.14.5
+export ACTIVEMQ_HOME=/apache-activemq-5.15.2
 
 # ActiveMQ needs a writeable directory for the log files and derbydb.
 if [ -z "$ACTIVEMQ_BASE" ] ; then
@@ -35,4 +35,11 @@ if [ ! -x "$ACTIVEMQ_HOME/bin/activemq" ]; then
     chmod +x "$ACTIVEMQ_HOME/bin/activemq"
 fi
 
+public_ip=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
+password=`date +%s | sha256sum | base64 | head -c 10 ; echo`
+keytool -genkey -noprompt -alias broker -keyalg RSA -keystore /certificate/broker.ks -keypass $password -storepass $password -dname "CN=$public_ip, OU=CHIP, O=BCH, L=Boston, S=MA, C=US"
+keytool -export -noprompt -alias broker -keystore /certificate/broker.ks -file /certificate/broker_cert -storepass $password
+export ACTIVEMQ_SSL_OPTS="-Djavax.net.ssl.keyStore=/certificate/broker.ks -Djavax.net.ssl.keyStorePassword=$password"
+
 "$ACTIVEMQ_HOME/bin/activemq" "console" "xbean:file:$ACTIVEMQ_BASE/conf/activemq-nojournal.xml"
+

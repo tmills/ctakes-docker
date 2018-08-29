@@ -8,4 +8,4 @@ else
 fi
 # The following maps $broker_port to 61616 which should match what 
 # is EXPOSEd by the Dockerfile for the broker
-docker run --name amq-broker -d -p $broker_port:61616 amq-image
+docker run --name amq-broker -d -p $broker_port:8080 -v ~/ctakes-docker/certificate:/certificate amq-image

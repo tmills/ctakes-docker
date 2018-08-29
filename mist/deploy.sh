@@ -6,7 +6,7 @@ then
   exit -1
 fi
 
+# import the certificate into the default keystore
 keytool -importcert -noprompt -file shared/broker_cert -alias brokerCA -keystore /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts -storepass changeit
 
-./deployAsyncService.sh desc/deploymentDescriptor.xml -brokerURL "https://$broker_host:$broker_port"
-
+./deployAsyncService.sh mistDeploymentDescriptor.xml -brokerURL "https://$broker_host:$broker_port"

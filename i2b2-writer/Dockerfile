@@ -17,28 +17,22 @@ COPY desc/deploymentDescriptor.xml /desc/
 ENV UIMA_HOME=/apache-uima-as-2.9.0
 ENV CTAKES_HOME=/apache-ctakes-4.0.0
 ENV UIMA_LOGGER_CONFIG_FILE=/Logging.properties
-ENV UIMA_JVM_OPTS="-Xms2G -Xmx5G"
 
 COPY ojdbc8.jar /
-COPY uimafit-core-2.2.0.jar /
-COPY uimaj-core-2.9.0.jar /
-COPY ctakes-type-system-4.0.0.jar /
-COPY ctakes-core-4.0.0.jar /
-COPY log4j-1.2.17.jar /
-COPY commons-io-2.2.jar /
-COPY commons-logging-1.1.1.jar /
-COPY commons-lang-2.6.jar /
-COPY spring-beans-3.1.2.RELEASE.jar /
-COPY spring-core-3.1.2.RELEASE.jar /
+#COPY commons-io-2.2.jar /
+#COPY commons-logging-1.1.1.jar /
+#COPY commons-lang-2.6.jar /
+#COPY spring-beans-3.1.2.RELEASE.jar /
+#COPY spring-core-3.1.2.RELEASE.jar /
 COPY I2b2ReadyFileWriter.java /
 COPY I2b2JdbcWriter.java /
 COPY AbstractJdbcWriter.java /
 COPY CreateDbWriterDescriptor.java /
 
-COPY wrapper.sh /
+COPY deploy.sh /
 
-RUN javac -cp uimafit-core-2.2.0.jar:uimaj-core-2.9.0.jar:ctakes-type-system-4.0.0.jar:ctakes-core-4.0.0.jar:log4j-1.2.17.jar:javax.annotation-api-1.2.jar:. I2b2ReadyFileWriter.java
-RUN javac -cp uimaj-core-2.9.0.jar:uimafit-core-2.2.0.jar:ctakes-type-system-4.0.0.jar:ctakes-core-4.0.0.jar:log4j-1.2.17.jar AbstractJdbcWriter.java I2b2JdbcWriter.java CreateDbWriterDescriptor.java
+RUN javac -cp $CTAKES_HOME/lib/uimafit-core-2.2.0.jar:$UIMA_HOME/lib/uima-core.jar:$CTAKES_HOME/lib/ctakes-type-system-4.0.0.jar:$CTAKES_HOME/lib/ctakes-core-4.0.0.jar:$CTAKES_HOME/lib/log4j-1.2.17.jar:javax.annotation-api-1.2.jar:. I2b2ReadyFileWriter.java
+RUN javac -cp $UIMA_HOME/lib/uima-core.jar:$CTAKES_HOME/lib/uimafit-core-2.2.0.jar:$CTAKES_HOME/lib/ctakes-type-system-4.0.0.jar:$CTAKES_HOME/lib/ctakes-core-4.0.0.jar:$CTAKES_HOME/lib/log4j-1.2.17.jar AbstractJdbcWriter.java I2b2JdbcWriter.java CreateDbWriterDescriptor.java
 RUN jar cf i2b2.jar *.class
 
-CMD ./wrapper.sh $output_table_name $oracle_host $oracle_user $oracle_pw $broker_host $broker_port
+CMD /deploy.sh
