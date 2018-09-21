@@ -35,6 +35,8 @@ public class IgnorableSectionAnnotator extends JCasAnnotator_ImplBase {
         logger.log(Level.WARNING, "Processing: " + docId);
 
         String text = jCas.getDocumentText();
+        if(text.length() == 0) return;
+
         String[] lines = text.split("\n");
         boolean prevIgnorable = false;
 

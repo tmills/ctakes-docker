@@ -23,4 +23,5 @@ then
   exit 1
 fi
 
+export UIMA_JVM_OPTS="-Xmx4g"
 "$UIMA_HOME/bin/runUimaClass.sh" org.apache.uima.examples.as.RunRemoteAsyncAE $@

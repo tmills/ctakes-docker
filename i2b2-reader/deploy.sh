@@ -15,5 +15,5 @@ java \
 -cp "ctakes-i2b2.jar:/apache-ctakes-4.0.0/lib/*:." \
 CreateDbReaderDescriptor desc/custom_reader.xml
 
-./runRemoteAsyncAE.sh -p 10  https://$broker_host:$broker_port mainQueue -d desc/localDeploymentDescriptor.xml  -c desc/custom_reader.xml
+./runRemoteAsyncAE.sh -p 10  failover:https://$broker_host:$broker_port mainQueue -d desc/localDeploymentDescriptor.xml  -c desc/custom_reader.xml
 

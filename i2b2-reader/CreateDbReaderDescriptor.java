@@ -28,7 +28,7 @@ public class CreateDbReaderDescriptor {
                 JdbcConnectionResourceImpl.PARAM_DRIVER_CLASS,
                 "oracle.jdbc.OracleDriver",
                 JdbcConnectionResourceImpl.PARAM_URL,
-                "jdbc:oracle:thin:@" + System.getProperty("oracle_host") + ":1521:ORCL",
+                "jdbc:oracle:thin:@" + System.getProperty("oracle_host"),
                 JdbcConnectionResourceImpl.PARAM_USERNAME,
                 System.getProperty("oracle_user"),
                 JdbcConnectionResourceImpl.PARAM_PASSWORD,

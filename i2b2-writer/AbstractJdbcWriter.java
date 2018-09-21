@@ -1,17 +1,16 @@
 import org.apache.ctakes.core.resource.JdbcConnectionResource;
 import org.apache.ctakes.core.util.SourceMetadataUtil;
 import org.apache.ctakes.typesystem.type.structured.SourceData;
-import org.apache.log4j.Logger;
-import org.apache.log4j.Level;
+import org.apache.uima.UIMAFramework;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
-import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.descriptor.ExternalResource;
 import org.apache.uima.jcas.JCas;
-import org.apache.uima.resource.ResourceAccessException;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.resource.ResourceProcessException;
+import org.apache.uima.util.Level;
+import org.apache.uima.util.Logger;
 
 import java.sql.*;
 import java.util.Collection;
@@ -27,7 +26,7 @@ import java.util.Map;
  */
 abstract public class AbstractJdbcWriter extends JCasAnnotator_ImplBase {
 
-   static private final Logger LOGGER = Logger.getLogger( "AbstractJdbcWriter" );
+   static private final Logger LOGGER = UIMAFramework.getLogger(AbstractJdbcWriter.class);
 
    // Parameter names for the desc file
    static public final String PARAM_DB_CONN_RESRC = "DbConnResrcName";
@@ -58,31 +57,30 @@ abstract public class AbstractJdbcWriter extends JCasAnnotator_ImplBase {
    static protected class TableSqlInfo {
       final private PreparedStatement __preparedStatement;
       private int __batchCount;
-
       protected TableSqlInfo( final Connection connection, final TableInfo tableInfo ) throws SQLException {
          final String sql = createRowInsertSql( tableInfo.getTableName(), tableInfo.getFieldInfos() );
-         LOGGER.info("sql with single quotes added around it = '" + sql + "'");
+         LOGGER.log(Level.INFO, "sql with single quotes added around it = '" + sql + "'");
          __preparedStatement = connection.prepareStatement( sql );
-         LOGGER.info("parm meta data = " + __preparedStatement.getParameterMetaData());
-         LOGGER.info("getQueryTimeout = " + __preparedStatement.getQueryTimeout());
-         LOGGER.info("See java.sql.Types for meaning of getParameterType");
+         LOGGER.log(Level.INFO, "parm meta data = " + __preparedStatement.getParameterMetaData());
+         LOGGER.log(Level.INFO, "getQueryTimeout = " + __preparedStatement.getQueryTimeout());
+         LOGGER.log(Level.INFO, "See java.sql.Types for meaning of getParameterType");
          for (int i=0; i <= __preparedStatement.getParameterMetaData().getParameterCount(); i++) { // note start 0 just in case and go to <= because it's 1-based
              try {
-            	 LOGGER.info("getParameterType("+i+")" + __preparedStatement.getParameterMetaData().getParameterType(i));
+            	 LOGGER.log(Level.INFO, "getParameterType("+i+")" + __preparedStatement.getParameterMetaData().getParameterType(i));
              } catch (SQLException e) {
-            	  LOGGER.info("Unable to retrieve getParameterType("+i+")");
+            	  LOGGER.log(Level.INFO, "Unable to retrieve getParameterType("+i+")");
              }
              
              try {
-             	 LOGGER.info("getParameterTypeName("+i+")" + __preparedStatement.getParameterMetaData().getParameterTypeName(i));
+             	 LOGGER.log(Level.INFO, "getParameterTypeName("+i+")" + __preparedStatement.getParameterMetaData().getParameterTypeName(i));
              } catch (SQLException e) {
-             	  LOGGER.info("Unable to retrieve getParameterTypeName("+i+")");
+             	  LOGGER.log(Level.INFO, "Unable to retrieve getParameterTypeName("+i+")");
              }
              
              try {
-            	 LOGGER.info("getParameterClassName("+i+")" + __preparedStatement.getParameterMetaData().getParameterClassName(i));
+            	 LOGGER.log(Level.INFO, "getParameterClassName("+i+")" + __preparedStatement.getParameterMetaData().getParameterClassName(i));
              } catch (SQLException e) {
-              	  LOGGER.info("Unable to retrieve getParameterClassName("+i+")");
+              	  LOGGER.log(Level.INFO, "Unable to retrieve getParameterClassName("+i+")");
              }
 
          }
@@ -137,7 +135,7 @@ abstract public class AbstractJdbcWriter extends JCasAnnotator_ImplBase {
             tableSqlInfo.__preparedStatement.close();
          }
       } catch ( SQLException sqlE ) {
-         LOGGER.warn( sqlE.getMessage() );
+         LOGGER.log(Level.WARNING, sqlE.getMessage() );
       }
       super.collectionProcessComplete( );
    }
@@ -150,7 +148,7 @@ abstract public class AbstractJdbcWriter extends JCasAnnotator_ImplBase {
    public void process( final JCas jcas ) throws AnalysisEngineProcessException {
       final SourceData sourceData = SourceMetadataUtil.getSourceData( jcas );
       if ( sourceData == null ) {
-         LOGGER.error( "Missing source metadata for document!" );
+         LOGGER.log(Level.SEVERE,  "Missing source metadata for document!" );
          return;
       }
       final long patientNum = SourceMetadataUtil.getPatientNum( jcas );
@@ -173,8 +171,8 @@ abstract public class AbstractJdbcWriter extends JCasAnnotator_ImplBase {
 
          for ( TableSqlInfo tableSqlInfo : _tableSqlInfoMap.values() ) {
             if ( tableSqlInfo.getBatchCount() > 0 ) {
-               LOGGER.info( "About to executeBatch()" );
-               LOGGER.info( "  prepared statement = " +  tableSqlInfo.getPreparedStatement());
+               LOGGER.log(Level.INFO,  "About to executeBatch()" );
+               LOGGER.log(Level.INFO,  "  prepared statement = " +  tableSqlInfo.getPreparedStatement());
 
                tableSqlInfo.getPreparedStatement().executeBatch();
                // Not all drivers automatically clearCollection the batch.  This is considered by some to be a feature, by most a bug.
@@ -246,8 +244,8 @@ abstract public class AbstractJdbcWriter extends JCasAnnotator_ImplBase {
     */
    static protected int writeTableRow( final PreparedStatement preparedStatement, final int batchSize,
                                        final Map<? extends FieldInfo, Object> fieldInfoMap ) throws SQLException {
-      LOGGER.info( "writeTableRow " );
-      LOGGER.info( "preparedStatment =  " + preparedStatement );
+      LOGGER.log(Level.INFO,  "writeTableRow " );
+      LOGGER.log(Level.INFO,  "preparedStatment =  " + preparedStatement );
       for ( Map.Entry<? extends FieldInfo, Object> fieldInfoEntry : fieldInfoMap.entrySet() ) {
          final int fieldIndex = fieldInfoEntry.getKey().getFieldIndex();
          final Class<?> valueClass = fieldInfoEntry.getKey().getValueClass();
@@ -267,44 +265,44 @@ abstract public class AbstractJdbcWriter extends JCasAnnotator_ImplBase {
          } else if ( valueClass.isAssignableFrom( Timestamp.class ) && Timestamp.class.isInstance( value ) ) {
             preparedStatement.setTimestamp( fieldIndex, (Timestamp)value );
          } else {
-            LOGGER.error( "About to throw SQLDataException ");
-            LOGGER.error( "  for "  + fieldInfoEntry.getKey().getFieldName() );
-            LOGGER.error( " with valueClass = " + valueClass);
-            LOGGER.error( " with value = " + value);
-            LOGGER.error( " with fieldIndex = " + fieldIndex);
+            LOGGER.log(Level.SEVERE,  "About to throw SQLDataException ");
+            LOGGER.log(Level.SEVERE,  "  for "  + fieldInfoEntry.getKey().getFieldName() );
+            LOGGER.log(Level.SEVERE,  " with valueClass = " + valueClass);
+            LOGGER.log(Level.SEVERE,  " with value = " + value);
+            LOGGER.log(Level.SEVERE,  " with fieldIndex = " + fieldIndex);
             throw new SQLDataException( "Invalid Value Class for Field " + fieldInfoEntry.getKey().getFieldName() );
          }
       }
-      LOGGER.info( "About to addBatch()" );
+      LOGGER.log(Level.INFO,  "About to addBatch()" );
       preparedStatement.addBatch();
       if ( batchSize + 1 >= MAX_BATCH_SIZE ) {
-               LOGGER.error( "About to executeBatch()" );
-               LOGGER.info( "  prepared statement = " +  preparedStatement);
+               LOGGER.log(Level.SEVERE,  "About to executeBatch()" );
+               LOGGER.log(Level.INFO,  "  prepared statement = " +  preparedStatement);
          try {
              preparedStatement.executeBatch();
          }  catch (java.sql.BatchUpdateException e) {
-             LOGGER.error(e);         
+             LOGGER.log(Level.SEVERE, e.toString());
              ///// >>>>>>>>>>>>>>>>
-             LOGGER.error("parm meta data = " + preparedStatement.getParameterMetaData());
-             LOGGER.error("getQueryTimeout = " + preparedStatement.getQueryTimeout());
-             LOGGER.error("See java.sql.Types for meaning of getParameterType");
+             LOGGER.log(Level.SEVERE, "parm meta data = " + preparedStatement.getParameterMetaData());
+             LOGGER.log(Level.SEVERE, "getQueryTimeout = " + preparedStatement.getQueryTimeout());
+             LOGGER.log(Level.SEVERE, "See java.sql.Types for meaning of getParameterType");
              for (int i=0; i <= preparedStatement.getParameterMetaData().getParameterCount(); i++) { // note start 0 just in case and go to <= because it's 1-based
                  try {
-            	     LOGGER.error("getParameterType("+i+")" + preparedStatement.getParameterMetaData().getParameterType(i));
+            	     LOGGER.log(Level.SEVERE, "getParameterType("+i+")" + preparedStatement.getParameterMetaData().getParameterType(i));
                  } catch (SQLException ignored) {
-            	      LOGGER.error("Unable to retrieve getParameterType("+i+")");
+            	      LOGGER.log(Level.SEVERE, "Unable to retrieve getParameterType("+i+")");
                  }
                  
                  try {
-             	     LOGGER.error("getParameterTypeName("+i+")" + preparedStatement.getParameterMetaData().getParameterTypeName(i));
+             	     LOGGER.log(Level.SEVERE, "getParameterTypeName("+i+")" + preparedStatement.getParameterMetaData().getParameterTypeName(i));
                  } catch (SQLException ignored) {
-             	      LOGGER.error("Unable to retrieve getParameterTypeName("+i+")");
+             	      LOGGER.log(Level.SEVERE, "Unable to retrieve getParameterTypeName("+i+")");
                  }
                  
                  try {
-            	     LOGGER.error("getParameterClassName("+i+")" + preparedStatement.getParameterMetaData().getParameterClassName(i));
+            	     LOGGER.log(Level.SEVERE, "getParameterClassName("+i+")" + preparedStatement.getParameterMetaData().getParameterClassName(i));
                  } catch (SQLException ignored) {
-              	      LOGGER.error("Unable to retrieve getParameterClassName("+i+")");
+              	      LOGGER.log(Level.SEVERE, "Unable to retrieve getParameterClassName("+i+")");
                  }
 
              }
@@ -312,12 +310,12 @@ abstract public class AbstractJdbcWriter extends JCasAnnotator_ImplBase {
 
          }
          // Not all drivers automatically clear the batch.  This is considered by some to be a feature, by most a bug.
-               LOGGER.info( "About to clearBatch()" );
+               LOGGER.log(Level.INFO,  "About to clearBatch()" );
          preparedStatement.clearBatch();
-               LOGGER.info(  " done with clearBatch()" );
+               LOGGER.log(Level.INFO,   " done with clearBatch()" );
          return 0;
       }
-     LOGGER.info(  " not a complete batch yet" );
+     LOGGER.log(Level.INFO,   " not a complete batch yet" );
       return batchSize + 1;
    }
 

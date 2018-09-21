@@ -86,7 +86,6 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
    // default is underscore
    private String _docIdDelimiter = "_";
 
-   private int _totalRowCount = 0;
    private int _currRowCount = 0;
    private int _encounter_num;
 
@@ -134,7 +133,6 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
                = (JdbcConnectionResource) getUimaContext().getResourceObject( resourceName );
          final Connection connection = jdbcConnectionResource.getConnection();
          _queryPrepStatement = connection.prepareStatement( sqlStatement );
-         _totalRowCount = getTotalRowCount( connection, sqlStatement );
          // TODO Upon migration to Java 7, consider merging into "catch ( ResourceAccessException | SQLException e )"
       } catch ( ResourceAccessException | ClassCastException raEccE ) {
          // thrown by UimaContext.getResourceObject(..)
@@ -154,43 +152,6 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
      */
    protected int getEncounterNum() {
       return _encounter_num;
-   }
-
-   /**
-    * Slice up the query SQL and rebuild a SQL statement that gets a row count;
-    * @param connection -
-    * @param querySql -
-    * @return total row count
-    * @throws SQLException
-    */
-   protected int getTotalRowCount( final Connection connection, final String querySql ) throws SQLException {
-      final PreparedStatement countStatement = createCountSql( connection, querySql );
-      int totalRowCount;
-      totalRowCount = getTotalRowCount( countStatement );
-      if ( !countStatement.isClosed() ) {
-         countStatement.close();
-      }
-      logger.log(INFO, "Processing row count:" + totalRowCount );
-      return totalRowCount;
-   }
-
-   static private PreparedStatement createCountSql( final Connection connection,
-                                                    final String querySql ) throws SQLException {
-      final StringBuilder sb = new StringBuilder();
-      sb.append( "SELECT COUNT(*) " );
-      final int fromIndex = querySql.toUpperCase().indexOf( "FROM" );
-      sb.append( querySql.subSequence( fromIndex, querySql.length() ) );
-      return connection.prepareStatement( sb.toString() );
-   }
-
-   static private int getTotalRowCount( final PreparedStatement countStatement ) throws SQLException {
-      final ResultSet resultSet = countStatement.executeQuery();
-      resultSet.next();
-      final int count = resultSet.getInt( 1 );
-      // Some jdbc drivers may not close the ResultSet when the PreparedStatement is closed
-      resultSet.close();
-      countStatement.close();
-      return count;
    }
 
    /**
@@ -404,7 +365,7 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
     */
    @Override
    public Progress[] getProgress() {
-      final Progress p = new ProgressImpl( _currRowCount, _totalRowCount, Progress.ENTITIES );
+      final Progress p = new ProgressImpl( _currRowCount, Integer.MAX_VALUE, Progress.ENTITIES );
       return new Progress[]{p};
    }
 
@@ -421,7 +382,7 @@ final public class MemReleaseI2b2CollectionReader extends JdbcCollectionReader {
       final long hours = (totalSeconds - days*daySeconds) / hourSeconds;
       final long minutes = (totalSeconds - days*daySeconds - hours*hourSeconds) / 60;
       final long seconds = totalSeconds % 60;
-      logger.log(INFO, getClass().getName() + " read " + _totalRowCount + " documents in "
+      logger.log(INFO, getClass().getName() + " read " + _currRowCount + " documents in "
                          + days + " days, " + hours + " hours, " + minutes + " minutes and " + seconds + " seconds" );
       try {
          if ( !_resultSet.isClosed() ) {

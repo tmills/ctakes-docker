@@ -61,6 +61,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 //import org.apache.uima.jcas.tcas.DocumentAnnotation;
 
@@ -219,7 +220,7 @@ public class XmlFixingFilesInDirectoryCollectionReader extends CollectionReader_
 	public void getNext( CAS aCAS ) throws IOException, CollectionException {
 		JCas jcas;
 		InputStream fileInputStream = null;
-		Reader fileReader = null;
+		BufferedReader fileReader = null;
 
 		try
 		{
@@ -227,25 +228,30 @@ public class XmlFixingFilesInDirectoryCollectionReader extends CollectionReader_
 
 			//open input stream to file
 			File file = iv_files.get( iv_currentIndex );
-			fileInputStream = new FileInputStream( file );
-			fileReader = new BufferedReader(new InputStreamReader(fileInputStream));
+			if(file.getName().endsWith(".gz")){
+				fileInputStream = new GZIPInputStream(new FileInputStream(file));
+			}else {
+				fileInputStream = new FileInputStream(file);
+			}
+
+			if(iv_encoding != null) {
+				fileReader = new BufferedReader(new InputStreamReader(fileInputStream, iv_encoding));
+			}else{
+				fileReader = new BufferedReader(new InputStreamReader(fileInputStream));
+			}
 
 			DocumentID documentIDAnnotation = new DocumentID(jcas);
 			String docID = createDocID(file);
 			documentIDAnnotation.setDocumentID(docID);
 			documentIDAnnotation.addToIndexes();
 
-			byte[] contents = new byte[(int)file.length() ];
-			fileInputStream.read( contents );
-			String text;
-			if (iv_encoding != null)
-			{
-				text = new String(contents, iv_encoding);
+			StringBuilder buff = new StringBuilder();
+			String line;
+			while((line = fileReader.readLine()) != null){
+				buff.append(line);
 			}
-			else
-			{
-				text = new String(contents);
-			}
+			String text = buff.toString();
+
 			//put document in CAS (assume CAS)
 			jcas.setDocumentText(forceXmlSerializable(text));
 
@@ -254,7 +260,6 @@ public class XmlFixingFilesInDirectoryCollectionReader extends CollectionReader_
 			{
 				//      ((DocumentAnnotation)jcas.getDocumentAnnotationFs()).setLanguage(iv_language);
 			}
-
 		}
 		catch (CASException e)
 		{
@@ -262,8 +267,8 @@ public class XmlFixingFilesInDirectoryCollectionReader extends CollectionReader_
 		}
 		finally
 		{
-			if (fileInputStream != null)
-				fileInputStream.close();
+			if (fileReader != null)
+				fileReader.close();
 			iv_currentIndex++;
 		}
 		try {
