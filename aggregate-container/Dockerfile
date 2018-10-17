@@ -12,10 +12,12 @@ RUN apk update && apk add ca-certificates openssl wget unzip
 RUN wget -q -O - http://archive.apache.org/dist/uima//uima-as-2.10.3/uima-as-2.10.3-bin.tar.gz | tar xzf -
 
 COPY deploy.sh /
+COPY GenerateDeploymentDescriptors.java /
 
 ENV UIMA_HOME=/apache-uima-as-2.10.3
 ENV UIMA_JVM_OPTS="-Xms2G -Xmx5G"
 ENV UIMA_LOGGER_CONFIG_FILE=/Logging.properties
-
+RUN javac -cp $UIMA_HOME/lib/uima-core.jar:$UIMA_HOME/lib/uimaj-as-core.jar GenerateDeploymentDescriptors.java
+RUN jar cf code.jar *.class
 
 CMD ./deploy.sh
