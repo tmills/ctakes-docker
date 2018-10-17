@@ -13,6 +13,12 @@ RUN wget -q -O - http://archive.apache.org/dist/uima//uima-as-2.10.3/uima-as-2.1
 
 COPY deploy.sh /
 COPY GenerateDeploymentDescriptors.java /
+COPY deployAsyncService.sh /
+COPY desc/aggregateDeploymentDescriptor.xml /
+COPY desc/docker-fast-dictionary.xml /
+COPY desc/docker-mist.xml /
+COPY desc/docker-writer.xml /
+COPY desc/remoteFull.xml /
 
 ENV UIMA_HOME=/apache-uima-as-2.10.3
 ENV UIMA_JVM_OPTS="-Xms2G -Xmx5G"
