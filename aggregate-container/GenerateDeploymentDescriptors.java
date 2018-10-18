@@ -35,17 +35,17 @@ public class GenerateDeploymentDescriptors {
         DelegateConfiguration mistConfig = DeploymentDescriptorFactory.createRemoteDelegateConfiguration("remoteMist",
 				brokerUrl,
 				"mistQueue",
-				SerializationStrategy.binary);
+				SerializationStrategy.xmi);
 
         DelegateConfiguration dictConfig = DeploymentDescriptorFactory.createRemoteDelegateConfiguration("dockerFastDictionary",
 				brokerUrl,
 				"myQueueName",
-				SerializationStrategy.binary);
+				SerializationStrategy.xmi);
 
         DelegateConfiguration writerConfig = DeploymentDescriptorFactory.createRemoteDelegateConfiguration("remoteI2b2Writer",
 				brokerUrl,
 				"writerQueue",
-				SerializationStrategy.binary);
+				SerializationStrategy.xmi);
 
 		UimaASAggregateDeploymentDescriptor dd =
 				DeploymentDescriptorFactory.
