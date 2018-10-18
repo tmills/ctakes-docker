@@ -52,6 +52,8 @@ public class GenerateDeploymentDescriptors {
 						createAggregateDeploymentDescriptor(context,
 								mistConfig, dictConfig, writerConfig);
 		dd.setAsync(true);
+		dd.setCasPoolSize(10);
+
 		String ddXML = dd.toXML();
 
 		BufferedWriter out = new BufferedWriter(new FileWriter("aggregateDeploymentDescriptor-auto.xml"));
