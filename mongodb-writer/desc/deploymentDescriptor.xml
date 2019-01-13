@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<analysisEngineDeploymentDescription xmlns="http://uima.apache.org/resourceSpecifier">
+  <name>deploymentDescriptor</name>
+  <description/>
+  <version>1.0</version>
+  <vendor/>
+  <deployment protocol="jms" provider="activemq">
+    <casPool numberOfCASes="1" initialFsHeapSize="2000000"/>
+    <service>
+      <inputQueue endpoint="writerQueue" prefetch="0"/>
+      <topDescriptor>
+<import location="custom_descriptor.xml"/>
+      </topDescriptor>
+      <analysisEngine async="false">
+        <scaleout numberOfInstances="1"/>
+        <asyncPrimitiveErrorConfiguration>
+          <processCasErrors thresholdCount="0" thresholdWindow="0" thresholdAction="terminate"/>
+          <collectionProcessCompleteErrors timeout="0" additionalErrorAction="terminate"/>
+        </asyncPrimitiveErrorConfiguration>
+      </analysisEngine>
+    </service>
+  </deployment>
+</analysisEngineDeploymentDescription>
