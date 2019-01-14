@@ -4,8 +4,6 @@
 //import org.apache.ctakes.core.cc.AbstractJdbcWriter;
 import org.apache.ctakes.core.pipeline.PipeBitInfo;
 import org.apache.ctakes.core.util.OntologyConceptUtil;
-import org.apache.ctakes.core.util.SourceMetadataUtil;
-import org.apache.ctakes.typesystem.type.structured.SourceData;
 import org.apache.ctakes.typesystem.type.refsem.Event;
 import org.apache.ctakes.typesystem.type.textsem.EventMention;
 import org.apache.ctakes.typesystem.type.textsem.IdentifiedAnnotation;
