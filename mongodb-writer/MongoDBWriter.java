@@ -1,19 +1,24 @@
 import org.apache.ctakes.core.pipeline.PipeBitInfo;
 import org.apache.ctakes.core.util.OntologyConceptUtil;
+import org.apache.ctakes.core.util.SourceMetadataUtil;
+import org.apache.ctakes.typesystem.type.structured.SourceData;
 import org.apache.ctakes.typesystem.type.refsem.Event;
 import org.apache.ctakes.typesystem.type.textsem.EventMention;
 import org.apache.ctakes.typesystem.type.textsem.IdentifiedAnnotation;
 import org.apache.ctakes.typesystem.type.textspan.Sentence;
 import org.apache.uima.UimaContext;
+import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.CASException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.apache.uima.resource.ResourceProcessException;
 import org.apache.uima.util.Logger;
 import org.apache.uima.util.Level;
 
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -26,6 +31,11 @@ import com.mongodb.MongoClientOptions;
 import org.bson.Document;
 
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class MongoDBWriter extends JCasAnnotator_ImplBase {
 
@@ -35,7 +45,7 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
 
     public static final String PARAM_MONGO_DB = "MongoDb";
     @ConfigurationParameter(name = PARAM_MONGO_DB, mandatory=false)
-    private String mongoDb = "mydb";
+    private String mongoDbName = "mydb";
 
     public static final String PARAM_MONGO_COLLECTION = "MongoCollection";
     @ConfigurationParameter(name = PARAM_MONGO_COLLECTION, mandatory=false)
@@ -46,6 +56,12 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
     public static final String PT_FIELD = "patient_num";
     public static final String PROVIDER_FIELD = "provider";
     public static final String SOURCESYSTEM_FIELD = "sourcesystem_cd";
+    public static final String SENT_FIELD = "sentence";
+    public static final String DOCTIMEREL_FIELD = "doctimerel";
+    public static final String UNCERTAINTY_FIELD = "uncertainty";
+    public static final String POLARITY_FIELD = "polarity";
+    public static final String END_FIELD = "end";
+    public static final String START_FIELD = "start";
 
     static private final String CTAKES_VERSION = "CTAKES_4.0.0_PL_171129";
 
@@ -54,6 +70,8 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
     private MongoDatabase mongoDb = null;
     private MongoCollection<Document> coll = null;
 
+    private static Logger logger = null;
+
     /**
      * {@inheritDoc}
      */
@@ -61,10 +79,14 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
     public void initialize(UimaContext context) throws ResourceInitializationException {
         super.initialize(context);
     
+        if(logger == null) {
+            logger = context.getLogger();
+        }
+
         // Initialize the MongoDB Connection
         try{
             this.mongoClient = MongoClients.create("mongodb://" + this.mongoHost);
-            this.mongoDb = mongoClient.getDatabase(this.mongoDb);
+            this.mongoDb = mongoClient.getDatabase(this.mongoDbName);
             this.coll = mongoDb.getCollection(this.collection);
         }catch(Exception e){
             throw new ResourceInitializationException(e);
@@ -78,7 +100,7 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
     public void process( final JCas jcas ) throws AnalysisEngineProcessException {
         final SourceData sourceData = SourceMetadataUtil.getSourceData( jcas );
         if ( sourceData == null ) {
-            LOGGER.log(Level.SEVERE,  "Missing source metadata for document!" );
+            logger.log(Level.SEVERE,  "Missing source metadata for document!" );
             return;
         }
         final long patientNum = SourceMetadataUtil.getPatientNum( jcas );
@@ -89,7 +111,6 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
             throw new AnalysisEngineProcessException(e);
         }
         final String providerId = SourceMetadataUtil.getProviderId( sourceData );
-        final Timestamp startDate = SourceMetadataUtil.getStartDate( sourceData );
 
         JCas deidView = null;
         try {
@@ -100,11 +121,9 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
 
 		final Collection<IdentifiedAnnotation> annotations = JCasUtil.select(jcas, IdentifiedAnnotation.class);
 		if (annotations.isEmpty()) {
-			logger.log(Level.WARNING, "No annotations found. Patient, encounter, provider =  " + patient + ", " + encounter + ", " + provider);
+			logger.log(Level.WARNING, "No annotations found. Patient, encounter, provider =  " + patientNum + ", " + encounterNum + ", " + providerId);
 			return;
 		}
-
-        String fullEncounter = encounterNum+"_"+patientNum;
 
         List<Document> docs = new ArrayList<>();
         // iterate over jcas identified annotations creating new documents
@@ -113,19 +132,19 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
             // A Cui may belong to multiple Tuis, making multiple UmlsConcept objects (one per tui).
             // I2b2 does NOT want multiple rows of a single Cui just because it has multiple tuis.
             // FIXME: Can make the TUI field be a list?
-			codes.addAll(OntologyConceptUtil.getCuis(annotation));
+			codes.addAll(OntologyConceptUtil.getCuis(ent));
             for(String code : codes){
                 Document doc = new Document()
                                     .append(CUI_FIELD, code)
                                     .append(PT_FIELD, patientNum)
-                                    .append(ENCOUNTER_FIELD, encounter)
+                                    .append(ENCOUNTER_FIELD, encounterNum)
                                     .append(SOURCESYSTEM_FIELD, CTAKES_VERSION)
                                     .append(START_FIELD, ent.getBegin())
                                     .append(END_FIELD, ent.getEnd())
                                     .append(POLARITY_FIELD, ent.getPolarity())
                                     .append(UNCERTAINTY_FIELD, ent.getUncertainty())
                                     .append(DOCTIMEREL_FIELD, getDocTimeRel(ent))
-                                    .append(SENT_FIELD, getCoveringSent(ent));
+                                    .append(SENT_FIELD, getCoveringSent(deidView, ent));
                 docs.add(doc);
             }
         }
@@ -150,7 +169,7 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
 	}
 
     // FIXME, selectCovering is known to be slow, this could potentially slow down writes
-    static private String getSentenceCoverage( final JCas jcas, final IdentifiedAnnotation annotation ) {
+    static private String getCoveringSent( final JCas jcas, final IdentifiedAnnotation annotation ) {
         final Collection<Sentence> entitySentences = JCasUtil.selectCovering( jcas,
         	            Sentence.class, annotation.getBegin(), annotation.getEnd() );
         int MAX_TVAL_LEN = 4000; 

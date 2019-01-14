@@ -18,3 +18,12 @@ ENV UIMA_LOGGER_CONFIG_FILE=/Logging.properties
 
 COPY mongo-java-driver-3.9.1.jar /
 
+COPY deploy.sh /
+
+COPY MongoDBWriter.java /
+
+RUN javac -cp $UIMA_HOME/lib/uima-core.jar:$CTAKES_HOME/lib/uimafit-core-2.2.0.jar:$CTAKES_HOME/lib/ctakes-type-system-4.0.0.jar:$CTAKES_HOME/lib/ctakes-core-4.0.0.jar:$CTAKES_HOME/lib/log4j-1.2.17.jar:mongo-java-driver-3.9.1.jar MongoDBWriter.java
+
+RUN jar cf mongodb-writer.jar *.class
+
+CMD /deploy.sh
