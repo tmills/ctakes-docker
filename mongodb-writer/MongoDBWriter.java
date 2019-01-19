@@ -149,7 +149,9 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
                 docs.add(doc);
             }
         }
-        this.coll.insertMany(docs);
+        if(docs != null && docs.size() > 0){
+            this.coll.insertMany(docs);
+        }
     }
 
     @Override
