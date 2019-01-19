@@ -120,11 +120,11 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
             deidView = jcas;
         }
 
-		final Collection<IdentifiedAnnotation> annotations = JCasUtil.select(jcas, IdentifiedAnnotation.class);
-		if (annotations.isEmpty()) {
-			logger.log(Level.WARNING, "No annotations found. Patient, encounter, provider =  " + patientNum + ", " + encounterNum + ", " + providerId);
-			return;
-		}
+        final Collection<IdentifiedAnnotation> annotations = JCasUtil.select(deidView, IdentifiedAnnotation.class);
+        if (annotations.isEmpty()) {
+            logger.log(Level.WARNING, "No annotations found. Patient, encounter, provider =  " + patientNum + ", " + encounterNum + ", " + providerId);
+            return;
+        }
 
         List<Document> docs = new ArrayList<>();
         // iterate over jcas identified annotations creating new documents
