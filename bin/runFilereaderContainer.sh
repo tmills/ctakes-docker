@@ -7,8 +7,7 @@ if [ ! -f env_file.txt ]; then
 fi
 
 shared_dir=`pwd`/shared
+file_dir=`pwd`/samples
 
-docker run --name i2b2-reader --env-file env_file.txt -v $shared_dir:/shared -d i2b2-reader
-
-
+docker run --name file-reader --env-file env_file.txt -v $shared_dir:/shared -v $file_dir:/files -d file-reader
 

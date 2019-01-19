@@ -11,11 +11,13 @@ RUN mkdir /outputs
 COPY Logging.properties /
 COPY deployAsyncService.sh /
 COPY desc/deploymentDescriptor.xml /desc/
+COPY desc/mongoWriter.xml /desc/
 
 ENV UIMA_HOME=/apache-uima-as-2.9.0
 ENV CTAKES_HOME=/apache-ctakes-4.0.0
 ENV UIMA_LOGGER_CONFIG_FILE=/Logging.properties
 
+# This is not included in the repo so find it yourself and put in mongodb-writer directory before building
 COPY mongo-java-driver-3.9.1.jar /
 
 COPY deploy.sh /

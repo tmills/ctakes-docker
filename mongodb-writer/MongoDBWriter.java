@@ -115,8 +115,9 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
         JCas deidView = null;
         try {
             deidView = jcas.getView("DeidView");
-        } catch(CASException e) {
-            throw new RuntimeException(e);
+        } catch(Exception e) {
+            logger.log(Level.SEVERE, "No deid view found... falling back to normal jCAS");
+            deidView = jcas;
         }
 
 		final Collection<IdentifiedAnnotation> annotations = JCasUtil.select(jcas, IdentifiedAnnotation.class);

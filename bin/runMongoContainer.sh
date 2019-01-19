@@ -7,8 +7,9 @@ if [ ! -f env_file.txt ]; then
 fi
 
 shared_dir=`pwd`/shared
+out_dir=`pwd`/outputs
 
-docker run --name i2b2-reader --env-file env_file.txt -v $shared_dir:/shared -d i2b2-reader
+docker run --name mongodb-writer --env-file env_file.txt -v $out_dir:/outputs -v $shared_dir:/shared -d mongodb-writer
 
 
 
