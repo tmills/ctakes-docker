@@ -7,7 +7,7 @@ else
   exit 1
 fi
 
-cert_dir=`pwd`/certificate
+cert_dir=`pwd`/shared
 rm -f $cert_dir/*
 
 # The following maps $broker_port to 61616 which should match what 
