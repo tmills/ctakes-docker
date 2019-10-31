@@ -5,14 +5,14 @@
   <version>1.0</version>
   <vendor/>
   <deployment protocol="jms" provider="activemq">
-    <casPool numberOfCASes="1" initialFsHeapSize="2000000"/>
+    <casPool numberOfCASes="2" initialFsHeapSize="2000000"/>
     <service>
       <inputQueue endpoint="mistQueue" prefetch="0"/>
       <topDescriptor>
 <import location="mistDescriptor.xml"/>
       </topDescriptor>
       <analysisEngine async="false">
-        <scaleout numberOfInstances="1"/>
+        <scaleout numberOfInstances="2"/>
         <asyncPrimitiveErrorConfiguration>
           <processCasErrors thresholdCount="0" thresholdWindow="0" thresholdAction="terminate"/>
           <collectionProcessCompleteErrors timeout="0" additionalErrorAction="terminate"/>

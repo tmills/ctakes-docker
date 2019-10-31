@@ -51,6 +51,15 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
     @ConfigurationParameter(name = PARAM_MONGO_COLLECTION, mandatory=false)
     private String collection = "cuis";
 
+    public static final String PARAM_MONGO_USER = "MongoUser";
+    @ConfigurationParameter(name = PARAM_MONGO_USER, mandatory=false)
+    private String mongoUser = null; 
+
+    public static final String PARAM_MONGO_PW = "MongoPw";
+    @ConfigurationParameter(name = PARAM_MONGO_PW, mandatory=false)
+    private String mongoPw = ""; 
+
+
     public static final String CUI_FIELD = "cui";
     public static final String ENCOUNTER_FIELD = "encounter";
     public static final String PT_FIELD = "patient_num";
@@ -85,7 +94,14 @@ public class MongoDBWriter extends JCasAnnotator_ImplBase {
 
         // Initialize the MongoDB Connection
         try{
-            this.mongoClient = MongoClients.create("mongodb://" + this.mongoHost);
+            String connectionString;
+            if(this.mongoUser == null){
+                connectionString = String.format("mongodb://%s", this.mongoHost);
+                logger.log(Level.SEVERE, "Using unauthenticated connection string: " + connectionString);
+            }else{
+                connectionString = String.format("mongodb://%s:%s@%s", this.mongoUser, this.mongoPw, this.mongoHost);
+            }
+            this.mongoClient = MongoClients.create(connectionString);
             this.mongoDb = mongoClient.getDatabase(this.mongoDbName);
             this.coll = mongoDb.getCollection(this.collection);
         }catch(Exception e){

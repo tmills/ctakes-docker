@@ -4,6 +4,8 @@ RUN apk update && apk add ca-certificates openssl wget unzip
 
 RUN wget -q -O - http://archive.apache.org/dist/activemq/5.15.2/apache-activemq-5.15.2-bin.tar.gz | tar xzf -
 EXPOSE 8080
+EXPOSE 8161
+EXPOSE 1009
 
 COPY startBroker.sh /
 COPY conf/* /apache-activemq-5.15.2/conf/

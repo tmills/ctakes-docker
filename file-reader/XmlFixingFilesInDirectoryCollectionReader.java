@@ -349,7 +349,7 @@ public class XmlFixingFilesInDirectoryCollectionReader extends CollectionReader_
 		sourcedata.setSourceOriginalDate( (new Timestamp(System.currentTimeMillis())).toString() );
 		metadata.setSourceData( sourcedata );
 		jCas.addFsToIndexes( metadata );
-		logger.log(Level.SEVERE, metadata.getPatientID() + " " + sourcedata.getSourceEncounterId() + " " + sourcedata.getSourceInstanceId());
+		logger.log(Level.INFO, metadata.getPatientID() + " " + sourcedata.getSourceEncounterId() + " " + sourcedata.getSourceInstanceId());
 		return jCas;
 	}
 }

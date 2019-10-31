@@ -121,13 +121,13 @@
         <systemUsage>
             <systemUsage>
                 <memoryUsage>
-                    <memoryUsage limit="2 gb"/>
+                    <memoryUsage limit="4 gb"/>
                 </memoryUsage>
                 <storeUsage>
-                    <storeUsage limit="2 gb"/>
+                    <storeUsage limit="4 gb"/>
                 </storeUsage>
                 <tempUsage>
-                    <tempUsage limit="2 gb"/>
+                    <tempUsage limit="4 gb"/>
                 </tempUsage>
             </systemUsage>
         </systemUsage>
@@ -153,4 +153,5 @@
         Take a look at ${ACTIVEMQ_HOME}/conf/jetty.xml for more details 
     <import resource="jetty.xml"/>
     -->
+    <import resource="jetty.xml"/>
 </beans>    
