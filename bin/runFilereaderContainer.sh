@@ -7,7 +7,7 @@ if [ ! -f env_file.txt ]; then
 fi
 
 shared_dir=`pwd`/shared
-file_dir=`pwd`/samples
+file_dir=`pwd`/files
 
-docker run --name file-reader --env-file env_file.txt -v $shared_dir:/shared -v $file_dir:/files -d file-reader
+docker run --name file-reader --rm --env-file env_file.txt -v $shared_dir:/shared -v $file_dir:/files -d file-reader
 
